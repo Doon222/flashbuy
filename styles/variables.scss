@@ -1,0 +1,26 @@
+// 颜色系统
+$primary-color: #FF4D4F;      // 主色调
+$secondary-color: #1890FF;    // 次要色调
+$text-color: #333;            // 主文本色
+$text-light: #666;            // 次要文本色
+$border-color: #eee;          // 边框色
+$background-color: #f8f8f8;   // 背景色
+$white: #fff;                 // 白色
+
+// 间距系统
+$spacing-xs: px2rpx(8);       // 超小间距
+$spacing-sm: px2rpx(16);      // 小间距
+$spacing-md: px2rpx(24);      // 中等间距
+$spacing-lg: px2rpx(32);      // 大间距
+$spacing-xl: px2rpx(48);      // 超大间距
+
+// 圆角系统
+$border-radius-sm: px2rpx(4); // 小圆角
+$border-radius-md: px2rpx(8); // 中等圆角
+$border-radius-lg: px2rpx(16);// 大圆角
+$border-radius-xl: px2rpx(24);// 超大圆角
+
+// 阴影系统
+$box-shadow-sm: 0 px2rpx(2) px2rpx(8) rgba(0, 0, 0, 0.08);
+$box-shadow-md: 0 px2rpx(4) px2rpx(12) rgba(0, 0, 0, 0.1);
+$box-shadow-lg: 0 px2rpx(8) px2rpx(24) rgba(0, 0, 0, 0.12);

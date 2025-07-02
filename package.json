@@ -1,0 +1,23 @@
+{
+  "name": "flashbuy-miniprogram",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.12.4",
+  "dependencies": {
+    "@dcloudio/uni-app": "^2.0.2-4060620250520001",
+    "@dcloudio/uni-ui": "^1.5.8",
+    "pinia": "^3.0.3",
+    "pinia-plugin-persistedstate": "^4.4.1",
+    "vue": "^3.5.17",
+    "deep-pick-omit": "^1.2.1",
+    "destr": "^2.0.5",
+    "luch-request": "^3.1.1"
+  }
+}

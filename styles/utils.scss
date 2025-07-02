@@ -1,0 +1,8 @@
+@use "sass:math";
+
+$design-width:375 ;
+
+// 单位转换函数
+@function px2rpx($px) {
+  @return calc(#{math.div($px * 750, $design-width)} * 1rpx);
+}
