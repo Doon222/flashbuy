@@ -4,29 +4,21 @@
     {
       "path": "pages/index/index",
       "style": {
-        "enablePullDownRefresh": true,
-        "navigationStyle": "custom", // 关键！禁用原生导航栏
-        "navigationBarTextStyle": "white"
-
       }
     },
     {
       "path": "pages/category/category",
       "style": {
-        "enablePullDownRefresh": true
-
       }
     },
     {
       "path": "pages/user/user",
       "style": {
-        "enablePullDownRefresh": true
       }
     },
     {
       "path": "pages/cart/cart",
       "style": {
-        "enablePullDownRefresh": true
       }
     }
   ],
@@ -64,10 +56,10 @@
   },
 
   "globalStyle": {
-    "navigationBarTextStyle": "white",
-    "navigationStyle": "custom",
-    "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
+    "navigationBarTextStyle": "black",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "backgroundColor": "#F8F8F8",
+    "navigationStyle": "custom"
   },
   "uniIdRouter": {}
 }

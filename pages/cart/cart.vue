@@ -1,6 +1,7 @@
 <!-- pages/cart/cart.vue -->
 <template>
   <view>
+    <NavLogo />
     <view>
       <button @click="mockAddCart">模拟添加商品</button>
       <button @click="clearCart">清空购物车</button>
@@ -13,6 +14,7 @@
 <script setup>
 
 import { useCartStore } from '@/stores/modules/cart.store'
+import NavLogo from "@/components/NavLogo.vue";
 
 const cartStore = useCartStore()
 
