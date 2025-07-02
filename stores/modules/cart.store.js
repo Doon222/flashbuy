@@ -1,29 +1,37 @@
-import {defineStore} from 'pinia'
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 
-export const useCartStore = defineStore('cart', {
-    state: () => ({
-        items: []// 购物车商品数组
-    }),
-    getters: {
-        // 计算商品总数（自动缓存）
-        totalCount: (state) => state.items.reduce((total, item) => total + item.quantity, 0),
-    },
-    actions: {
-        // 添加专用action修改状态
-        addItem(item) {
-            this.items.push(item)
-        },
-        clearCart() {
-            this.items = []
-        }
-    },
+export const useCartStore = defineStore('cart', () => {
+    // State
+    const items = ref([]) // 购物车商品数组
+
+    // Getters
+    const totalCount = computed(() =>
+        items.value.reduce((total, item) => total + item.quantity, 0)
+    )
+
+    // Actions
+    function addItem(item) {
+        items.value.push(item)
+    }
+
+    function clearCart() {
+        items.value = []
+    }
+
+    return {
+        items,
+        totalCount,
+        addItem,
+        clearCart
+    }
+}, {
     persist: {
         enabled: true,
         strategies: [
             {
                 key: 'cart',
-                paths: ['items']    // 只持久化items数组
-
+                paths: ['items'] // 只持久化items数组
             }
         ]
     }

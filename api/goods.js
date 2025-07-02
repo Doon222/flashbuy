@@ -5,7 +5,7 @@ const API_BASE = '/api'
 export default {
 
     // 获取商品列表
-    getGoodsList: (page = 1, limit = 5) => http.get(`${API_BASE}/recommend`, {page, limit}),
+    getGoodsList: ({page = 1, limit = 8}) => http.get(`${API_BASE}/recommend`, {page, limit}),
 
     // 获取商品分类
     getGoodsCategory: () => http.get(`${API_BASE}/getcategory`),
