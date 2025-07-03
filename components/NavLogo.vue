@@ -45,7 +45,7 @@ function navigateToSearch() {
     </view>
   </view>
 
-  <view class="navbar-placeholder" :style="{ height: `calc(${safeAreaInsets.top}px + ${navbarHeight+30}px)` }"></view>
+  <view class="navbar-placeholder" :style="{ height: `calc(${safeAreaInsets.top+10}px + ${navbarHeight+30}px)` }"></view>
 </template>
 
 <style lang="scss">

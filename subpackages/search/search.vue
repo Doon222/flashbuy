@@ -43,8 +43,6 @@
           <text class="remove" @click.stop="removeHistory(index)">×</text>
         </view>
       </view>
-`
-
 
     </view>
     <BackBtn/>

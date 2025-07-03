@@ -56,6 +56,10 @@
         </view>
       </view>
 
+      <view class="recommend">
+        <text>———— 为您推荐 ————</text>
+      </view>
+
       <view class="goods-list">
         <view class="goods-item" v-for="item in goodsList" :key="item.id">
           <image :src="item.img_url" mode="aspectFill"></image>
@@ -244,6 +248,12 @@ const fetchGoodsData = async (page = 1) => {
   }
 }
 
+.recommend{
+  width: 100vw;
+  text-align: center;
+  color: #555555;
+}
+
 .goods-list {
   display: flex; /* 改为弹性布局 */
   flex-wrap: wrap; /* 允许换行 */
@@ -280,7 +290,7 @@ const fetchGoodsData = async (page = 1) => {
       flex-direction: column;
 
       .title {
-        font-size: px2rpx(8); /* 缩小字体 */
+        font-size: px2rpx(7); /* 缩小字体 */
         color: #333;
         display: -webkit-box;
         -webkit-line-clamp: 2; /* 两行文字 */
@@ -292,7 +302,7 @@ const fetchGoodsData = async (page = 1) => {
       }
 
       .price {
-        font-size: px2rpx(14); /* 缩小字体 */
+        font-size: px2rpx(12); /* 缩小字体 */
         color: #ff5000;
         font-weight: bold;
         margin-top: auto; /* 价格到底部 */
