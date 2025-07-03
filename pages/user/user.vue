@@ -81,13 +81,12 @@ const isLogin = ref(false);
   display: flex;
   align-items: center;
   padding: 0 px2rpx(15) px2rpx(20);
-  margin-bottom: 20rpx;
   width: 90vw;
 
   .setting{
-    width: px2rpx(20);
-    height: px2rpx(20);
-    margin-left: px2rpx(18);
+    width: px2rpx(15);
+    height: px2rpx(15);
+
 
   }
 
@@ -118,8 +117,8 @@ const isLogin = ref(false);
   width: px2rpx(40);
   height: px2rpx(15);
   align-self: flex-start;
-  margin: 0;
   font-size: px2rpx(6);
+  margin: px2rpx(1) 0 0;
 }
 
 

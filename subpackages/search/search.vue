@@ -103,37 +103,37 @@ const clearHistory = () => {
 /* 保持原有样式不变 */
 .container {
   padding: 0;
-  background-color: #f8f8f8;
+  background-color: #FFFFFF;
   min-height: 100vh;
 }
 
 .search-container {
-  padding: 20rpx 30rpx;
+  padding: px2rpx(10) px2rpx(15);
   background-color: #fff;
-  margin-bottom: 20rpx;
+  margin-bottom: px2rpx(5);
 }
 
 .search-box {
   display: flex;
   align-items: center;
-  height: 80rpx;
+  height: px2rpx(20);
   background-color: #f5f5f5;
-  border-radius: 40rpx;
-  padding: 0 30rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  border-radius: px2rpx(20);
+  padding: 0 px2rpx(15);
+  box-shadow: 0 px2rpx(1) px2rpx(4) rgba(0, 0, 0, 0.05);
 }
 
 .search-icon {
-  font-size: 36rpx;
+  font-size: px2rpx(8);
   color: #999;
-  margin-right: 20rpx;
+  margin-right: px2rpx(10);
   flex-shrink: 0;
 }
 
 .search-input {
   flex: 1;
   height: 100%;
-  font-size: 30rpx;
+  font-size: px2rpx(15);
   color: #333;
   padding: 0;
   background: transparent;
@@ -141,56 +141,56 @@ const clearHistory = () => {
 
 .placeholder-style {
   color: #999;
-  font-size: 30rpx;
+  font-size: px2rpx(8);
 }
 
 .search-btn {
   background: none;
   border: none;
   color: #007aff;
-  font-size: 30rpx;
+  font-size: px2rpx(8);
   font-weight: 500;
-  padding-left: 20rpx;
+  padding-left: px2rpx(10);
   flex-shrink: 0;
 }
 
 .history-section {
-  padding: 0 30rpx;
+  padding: 0 px2rpx(15);
   background-color: #fff;
-  border-radius: 20rpx 20rpx 0 0;
+  border-radius: px2rpx(10) px2rpx(10) 0 0;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30rpx 0;
+  padding: px2rpx(15) 0;
   border-bottom: 1rpx solid #f0f0f0;
 }
 
 .section-title {
-  font-size: 32rpx;
+  font-size: px2rpx(8);
   font-weight: 600;
   color: #333;
 }
 
 .clear-history {
-  color: #666;
-  font-size: 28rpx;
+  font-size: px2rpx(7);
   display: flex;
   align-items: center;
+  color: red;
 }
 
 .history-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 20rpx;
-  padding: 30rpx 0;
+  gap: px2rpx(5);
+  padding: px2rpx(15) 0;
 }
 
 .history-tag {
   background: #f7f7f7;
-  border-radius: 40rpx;
+  border-radius: px2rpx(20);
   padding: 16rpx 30rpx;
   font-size: 28rpx;
   color: #333;
@@ -208,7 +208,7 @@ const clearHistory = () => {
 .history-tag .remove {
   color: #999;
   font-size: 36rpx;
-  margin-left: 10rpx;
+  margin-left: px2rpx(5);
   transition: color 0.2s;
 
   &:active {
@@ -219,7 +219,7 @@ const clearHistory = () => {
 
 .empty-state {
   text-align: center;
-  padding: 80rpx 0;
+  padding: px2rpx(40) 0;
   color: #999;
   width: 100%;
   font-size: 28rpx;

@@ -10,8 +10,8 @@ export default {
     // 获取商品分类
     getGoodsCategory: () => http.get(`${API_BASE}/getcategory`),
 
-    // 获取分类下的商品
-    getGoodsByCategory: (categoryId) => http.get(`${API_BASE}/getcategorygoods`, {categoryId}),
+    // 根据分类id获取商品
+    getGoodsByCategory: (categoryId) => http.get(`${API_BASE}/getcategorygoods`, {category_id :categoryId}),
 
     // 获取商品详情
     getGoodsDetail: (goodsId) => http.get(`${API_BASE}/getgoodsinfo/${goodsId}`),
@@ -19,5 +19,7 @@ export default {
     // 获取商品图片
     getGoodsImages: (goodsId) => http.get(`${API_BASE}/getthumbimages/${goodsId}`),
 
+    // 搜索商品
+    searchGoods: ({value, sort, page = 1, pagesize = 10}) => http.get(`${API_BASE}/search`, {value, sort, page, pagesize}),
 
 }

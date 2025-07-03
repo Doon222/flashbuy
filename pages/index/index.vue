@@ -65,7 +65,10 @@
           <image :src="item.img_url" mode="aspectFill"></image>
           <view class="goods-info">
             <text class="title">{{ item.title }}</text>
-            <text class="price">{{ item.sell_price }}</text>
+            <view class="price-view">
+              <text class="price"> {{ item.sell_price }}</text>
+              <text class="original-price">{{ item.market_price }}</text>
+            </view>
           </view>
         </view>
       </view>
@@ -83,12 +86,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import {ref} from "vue";
 import carouselAPI from '/api/carousel'
 import goodsAPI from '/api/goods'
 import NavLogo from "@/components/NavLogo.vue";
 import UniLoadMore from '@dcloudio/uni-ui/lib/uni-load-more/uni-load-more.vue'
-import { onLoad } from '@dcloudio/uni-app'
+import {onLoad} from '@dcloudio/uni-app'
 
 const carouselList = ref([])
 const goodsList = ref([])
@@ -248,7 +251,7 @@ const fetchGoodsData = async (page = 1) => {
   }
 }
 
-.recommend{
+.recommend {
   width: 100vw;
   text-align: center;
   color: #555555;
@@ -301,15 +304,28 @@ const fetchGoodsData = async (page = 1) => {
         margin-bottom: px2rpx(4);
       }
 
-      .price {
-        font-size: px2rpx(12); /* 缩小字体 */
-        color: #ff5000;
-        font-weight: bold;
-        margin-top: auto; /* 价格到底部 */
+      .price-view {
+        width: 100%;
+        .price {
+          color: #ff5000;
+          font-weight: bold;
+          margin-top: auto; /* 价格到底部 */
 
-        &::before {
-          content: "¥";
-          font-size: px2rpx(12);
+          &::before {
+            content: "¥";
+          }
+        }
+
+        .original-price {
+          font-size: 12px; /* 字体使用px */
+          color: #999;
+          text-decoration: line-through;
+          margin-left: px2rpx(15);
+
+          &::before {
+            content: "¥";
+          }
+
         }
       }
     }

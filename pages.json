@@ -28,13 +28,7 @@
       "pages": [
         {
           "path": "search"
-        }
-      ]
-    },
-    {
-      "root": "subpackages/search-result",
-      "pages": [
-        {
+        },{
           "path": "search-result"
         }
       ]
