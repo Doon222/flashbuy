@@ -49,7 +49,7 @@
           </view>
           <view class="more-item">
             <view>
-              <image src="/static/home/ranking.png" mode="aspectFill"></image>
+              <image src="/static/home/ranking.png" mode="aspectFill" @click="goToCategory"></image>
             </view>
             <text>更多商品</text>
           </view>
@@ -61,7 +61,7 @@
       </view>
 
       <view class="goods-list">
-        <view class="goods-item" v-for="item in goodsList" :key="item.id">
+        <view class="goods-item" v-for="item in goodsList" :key="item.id" @click="goToGoodsDetail(item.id)">
           <image :src="item.img_url" mode="aspectFill"></image>
           <view class="goods-info">
             <text class="title">{{ item.title }}</text>
@@ -185,6 +185,20 @@ const fetchGoodsData = async (page = 1) => {
       icon: 'none'
     })
   }
+}
+
+// 跳转到 分类
+const goToCategory= () => {
+  uni.switchTab({
+    url: '/pages/category/category'
+  })
+}
+
+// 跳转到商品详情
+const goToGoodsDetail = (goodsId) => {
+  uni.navigateTo({
+    url: `/subpackages/detail/goods-detail?value=${goodsId}`
+  })
 }
 </script>
 

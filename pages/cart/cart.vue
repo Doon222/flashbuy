@@ -6,9 +6,9 @@
       <button @click="mockAddCart">模拟添加商品</button>
       <button @click="clearCart">清空购物车</button>
       <button @click="testBadge">测试徽标</button>
-      <button @click="testGetCategory">测试获取分类</button>
-      <button @click="testGetGoods">测试获取商品</button>
-      <button @click="testSearchCategory">测试查询商品</button>
+      <button @click="testGetGoodsImg">测试根据id查询商品轮播图</button>
+      <button @click="testGetGoodsDetail">测试根据id查询商品详情</button>
+
     </view>
 
   </view>
@@ -45,20 +45,13 @@ const testBadge = () => {
 
 }
 
-const testGetCategory = async () => {
-  const res = await GoodsApi.getGoodsCategory()
+const testGetGoodsImg = async () => {
+  const res = await GoodsApi.getGoodsImages(87)
   console.log(res)
 }
 
-const testGetGoods = async () => {
-  const res = await GoodsApi.getGoodsByCategory(29)
-  console.log(res)
-}
-
-const testSearchCategory = async () => {
-  const res = await GoodsApi.searchGoods({
-    value: '手机',
-  })
+const testGetGoodsDetail = async () => {
+  const res = await GoodsApi.getGoodsDetail(87)
   console.log(res)
 }
 

@@ -3,7 +3,7 @@
     <!-- 导航栏内容 -->
     <view ref="navbarRef" class="navbar-content" :style="{ paddingTop: safeAreaInsets.top + 'px' }">
       <view class="nav-logo">
-        <image src="@/static/logo.png" mode="aspectFit" class="logo"/>
+        <image src="@/static/logo.png" mode="aspectFit" class="logo" @click="goToHome"/>
         <text class="logo-text">| 闪电一般的购物体验</text>
       </view>
 
@@ -95,6 +95,12 @@ watch(() => props.showSearch, async (newVal) => {
 function navigateToSearch() {
   uni.navigateTo({
     url: '/subpackages/search/search'
+  })
+}
+
+function goToHome() {
+  uni.switchTab({
+    url: '/pages/index/index'
   })
 }
 </script>

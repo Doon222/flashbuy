@@ -53,6 +53,7 @@
                 v-for="goods in goodsList"
                 :key="goods.id"
                 class="goods-card"
+                @click="goToGoodsDetail(goods.id)"
             >
               <image class="goods-image" :src="goods.thumb_path" mode="aspectFill" />
               <view class="goods-info">
@@ -62,6 +63,9 @@
                   <text class="original-price">¥{{ goods.market_price }}</text>
                 </view>
               </view>
+            </view>
+            <view class="no-more">
+              <text>—— 没有更多了 ——</text>
             </view>
           </view>
 
@@ -128,6 +132,13 @@ const selectCategory = (category) => {
   fetchGoodsByCategory(category.id);
 };
 
+// 跳转到商品详情
+const goToGoodsDetail = (goodsId) => {
+  uni.navigateTo({
+    url: `/subpackages/detail/goods-detail?value=${goodsId}`
+  })
+}
+
 // 初始化
 onMounted(() => {
   fetchCategories();
@@ -186,9 +197,9 @@ onMounted(() => {
         border-bottom: #{px2rpx(0.5)} solid #f0f0f0;
 
         .category-img {
-          width: 100%;
+          width: 95%;
           height: auto;
-          max-height: #{px2rpx(100)};
+          margin: px2rpx(4);
         }
 
         .info-wrapper {
@@ -331,5 +342,12 @@ onMounted(() => {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.no-more{
+  padding: px2rpx(15);
+  text-align: center;
+  color: #999;
+  font-size: px2rpx(8);
 }
 </style>

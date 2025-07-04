@@ -1,6 +1,6 @@
 <template>
   <view class="searchresult-container">
-    <NavLogo />
+    <NavLogo/>
     <!-- 自定义顶部导航栏 -->
     <view class="header">
       <text class="header-text">搜索结果</text>
@@ -23,7 +23,7 @@
       </view>
 
       <view v-else class="goods-container">
-        <view class="goods-item" v-for="item in goods" :key="item.id">
+        <view class="goods-item" v-for="item in goods" :key="item.id" @click="goToGoodsDetail(item.id)">
           <image class="goods-image" :src="item.img_url" mode="aspectFill"/>
           <view class="goods-info">
             <view class="goods-title">{{ item.title }}</view>
@@ -37,9 +37,6 @@
             </view>
           </view>
         </view>
-      </view>
-      <view class="no-more">
-        <text class="no-more-text">———— 没有更多了 ————</text>
       </view>
     </scroll-view>
     <BackBtn/>
@@ -95,7 +92,7 @@ const search = async () => {
 
 // 切换排序方式
 const changeSort = (e) => {
-  console.log('sortIndex=',e.detail.value)
+  console.log('sortIndex=', e.detail.value)
   sortIndex.value = e.detail.value;
   search();
 };
@@ -104,10 +101,18 @@ const changeSort = (e) => {
 onLoad((options) => {
   if (options.value) {
     value.value = options.value
-    console.log('value=',value.value)
+    console.log('value=', value.value)
     search()
   }
 });
+
+// 跳转到商品详情
+const goToGoodsDetail = (goodsId) => {
+  uni.navigateTo({
+    url: `/subpackages/detail/goods-detail?value=${goodsId}`
+  })
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -173,8 +178,8 @@ onLoad((options) => {
       padding-top: 150rpx;
 
       .empty-image {
-        width: 300rpx;
-        height: 300rpx;
+        width: 150rpx;
+        height: 150rpx;
         margin-bottom: 30rpx;
       }
 
@@ -266,13 +271,6 @@ onLoad((options) => {
           }
         }
       }
-    }
-
-    .no-more{
-      width: 100vw;
-      height: px2rpx(20);
-      text-align: center;
-      color: #555555;
     }
   }
 }
