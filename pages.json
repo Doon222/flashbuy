@@ -40,6 +40,45 @@
           "path": "goods-detail"
         }
       ]
+    },
+    {
+      "root": "subpackages/login",
+      "pages": [
+        {
+          "path": "login"
+        }
+      ]
+    },
+    {
+      "root": "subpackages/register",
+      "pages": [
+        {
+          "path": "register"
+        }
+      ]
+    },{
+      "root": "subpackages/order",
+      "pages": [
+        {
+          "path": "order"
+        }
+      ]
+    },
+    {
+      "root": "subpackages/address",
+      "pages": [
+        {
+          "path": "address"
+        }
+      ]
+    },
+    {
+      "root": "subpackages/setting",
+      "pages": [
+        {
+          "path": "setting"
+        }
+      ]
     }
   ],
   "tabBar": {

@@ -6,9 +6,9 @@
       <image src="/static/user/default-avatar.jpg" class="avatar"/>
       <view class="user-info">
         <text class="username">请先登录/注册您的账号</text>
-        <button class="login-btn">点击登录</button>
+        <button class="login-btn" @click="goToLogin">点击登录</button>
       </view>
-      <image class="setting" src="/static/user/set.png"/>
+      <image class="setting" src="/static/user/set.png" @click="goToSetting"/>
     </view>
 
     <!-- 认证入口 -->
@@ -19,13 +19,13 @@
           <text class="auth-title">登录即享丰厚福利</text>
         </view>
         <view class="auth-right">
-          <text class="auth-btn">立即登录 ></text>
+          <text class="auth-btn" @click="goToLogin">立即登录 ></text>
         </view>
       </view>
     </view>
     <!-- 功能卡片 -->
     <view class="tool-card-container">
-      <view class="tool-card">
+      <view class="tool-card" @click="goToOrder">
         <view class="card-content">
           <view class="text-content">
             <text class="card-title">订单</text>
@@ -34,7 +34,7 @@
           <image src="/static/user/order.png" class="card-icon" mode="aspectFit"/>
         </view>
       </view>
-      <view class="tool-card">
+      <view class="tool-card" @click="goToAddress">
         <view class="card-content">
           <view class="text-content">
             <text class="card-title">地址</text>
@@ -50,9 +50,9 @@
     </view>
 
     <view class="my-history">
-        <view>
-          请先登录
-        </view>
+      <view>
+        请先登录
+      </view>
     </view>
 
   </view>
@@ -63,6 +63,45 @@ import NavLogo from "@/components/NavLogo.vue";
 import {ref} from "vue";
 
 const isLogin = ref(false);
+
+const goToLogin = () => {
+  uni.navigateTo({
+    url: '/subpackages/login/login'
+  })
+}
+
+const goToOrder = () => {
+  if (!isLogin.value) {
+    uni.showToast({
+      title: '请先登录在使用订单功能',
+      icon: 'none'
+    })
+    return
+  }
+  uni.navigateTo({
+    url: '/subpackages/order/order'
+  })
+}
+
+const goToAddress = () => {
+  if (!isLogin.value) {
+    uni.showToast({
+      title: '请先登录再使用地址功能',
+      icon: 'none'
+    })
+    return
+  }
+  uni.navigateTo({
+    url: '/subpackages/address/address'
+  })
+}
+
+const goToSetting = () => {
+  uni.navigateTo({
+    url: '/subpackages/setting/setting'
+  })
+}
+
 </script>
 
 
@@ -80,10 +119,11 @@ const isLogin = ref(false);
 .user-header {
   display: flex;
   align-items: center;
-  padding: 0 px2rpx(15) px2rpx(20);
+  margin-top: 30rpx;
+  padding: 0 px2rpx(15) px2rpx(10);
   width: 90vw;
 
-  .setting{
+  .setting {
     width: px2rpx(15);
     height: px2rpx(15);
 
@@ -99,7 +139,7 @@ const isLogin = ref(false);
   margin-right: 40rpx;
 }
 
-.user-info{
+.user-info {
   display: flex;
   flex-direction: column;
   width: px2rpx(100);
@@ -113,7 +153,7 @@ const isLogin = ref(false);
   margin-bottom: 10rpx;
 }
 
-.login-btn{
+.login-btn {
   width: px2rpx(40);
   height: px2rpx(15);
   align-self: flex-start;
@@ -204,7 +244,7 @@ const isLogin = ref(false);
   flex: 1;
 }
 
-.recommend{
+.recommend {
   width: 100vw;
   text-align: center;
   color: #555555;
@@ -258,7 +298,7 @@ const isLogin = ref(false);
   margin-right: 20rpx;
 }
 
-.my-history{
+.my-history {
   flex: 1;
   display: flex;
   justify-content: center;

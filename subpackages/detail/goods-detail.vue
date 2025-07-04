@@ -152,9 +152,6 @@ const quantity = ref(1);
 const actionType = ref('cart');
 const goodsId = ref(0);
 
-// 规格选项
-const selectedSpec = ref(0);
-const selectedColor = ref(0);
 
 // 生命周期
 onLoad((options) => {
@@ -236,9 +233,35 @@ const formatDate = (dateString) => {
 
 
 const processRichText = (html) => {
-  // 方案1：简单添加样式
-  html = html.replace(/<img/gi, '<img style="max-width:100%;height:auto;display:block;margin:10rpx auto;"');
-  return html;
+  if (!html) return '';
+
+  // 1. 处理图片 - 移除固定尺寸，添加响应式样式
+  html = html.replace(/<img([^>]*)width="[^"]*"/gi, '<img$1')
+      .replace(/<img([^>]*)height="[^"]*"/gi, '<img$1')
+      .replace(/<img/gi, '<img style="max-width:100%;height:auto;display:block;margin:10rpx auto;"');
+
+  // 2. 处理表格 - 转为响应式
+  html = html.replace(/<table([^>]*)width="[^"]*"/gi, '<table$1')
+      .replace(/<table/gi, '<div class="table-container"><table style="width:100%!important;"')
+      .replace(/<\/table>/gi, '</table></div>');
+
+  // 3. 移除不必要的空白和换行符
+  html = html.replace(/↵/g, '').trim();
+
+  // 4. 添加基础安全样式
+  const safeStyle = `
+    <style>
+      body {font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 28rpx; line-height: 1.6; color: #333;}
+      p {margin: 20rpx 0; word-break: break-word;}
+      img {max-width: 100% !important; height: auto !important; display: block; margin: 20rpx auto;}
+      .table-container {overflow-x: auto; margin: 20rpx 0;}
+      table {width: 100% !important; border-collapse: collapse;}
+      td, th {border: 1px solid #ddd; padding: 12rpx; text-align: left;}
+      a {color: #576b95; text-decoration: none;}
+    </style>
+  `;
+
+  return safeStyle + html;
 };
 
 // 返回上一页
@@ -371,6 +394,7 @@ const goBack = () => {
   font-size: 26rpx;
   color: #666;
   margin-bottom: 10rpx;
+  margin-top: 10rpx;
 }
 
 .extra-label {
@@ -382,7 +406,46 @@ const goBack = () => {
 .goods-detail {
   background: #fff;
   margin-top: 20rpx;
-  padding: 30rpx;
+  padding: 30rpx 30rpx 140rpx;
+
+  ::v-deep {
+    img {
+      max-width: 100% !important;
+      height: auto !important;
+      display: block;
+      margin: 20rpx auto;
+      border-radius: 8rpx;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin: 20rpx 0;
+      -webkit-overflow-scrolling: touch;
+
+      table {
+        min-width: 100%;
+        border-collapse: collapse;
+
+        td, th {
+          border: 1rpx solid #eee;
+          padding: 16rpx;
+          word-break: break-word;
+        }
+      }
+    }
+
+    p {
+      margin: 24rpx 0;
+      line-height: 1.8;
+      color: #333;
+    }
+
+    a {
+      color: #e93b3d;
+      word-break: break-all;
+    }
+  }
+
 }
 
 .detail-title {
@@ -399,7 +462,7 @@ const goBack = () => {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 160rpx;
+  height: 120rpx;
   background: #fff;
   display: flex;
   align-items: start;

@@ -268,6 +268,7 @@ onMounted(() => {
             width: #{px2rpx(50)};
             height: #{px2rpx(50)};
             background-color: #f8f9fa;
+            border-bottom-right-radius: #{px2rpx(8)}; /* 右下角圆角 */
           }
 
           .goods-info {
