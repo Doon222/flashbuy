@@ -37,7 +37,7 @@
             v-for="(item, index) in searchStore.history"
             :key="index"
             class="history-tag"
-            @click="search(item)"
+            @click="toSearch(item)"
         >
           <text class="text">{{ item.toString() }}</text>
           <text class="remove" @click.stop="removeHistory(index)">×</text>
@@ -63,17 +63,30 @@ const searchStore = useSearchHistoryStore()
 // 搜索功能
 const search = () => {
 
-  // 添加到历史记录 - 使用 Pinia action
-  searchStore.addHistory(searchQuery.value)
-  console.log(searchStore.history)
+  // 确保输入是非空字符串
+  const query = searchQuery.value.trim()
+  console.log('query=', query)
+
+  if (!query) {
+    uni.showToast({
+      title: '请输入搜索关键词',
+      icon: 'none'
+    })
+    return
+  }
+
+  // 添加到历史记录 - 存储字符串
+  searchStore.addHistory(query)
 
   // 清空搜索框
   searchQuery.value = ''
 
-  // 执行搜索操作
-  // uni.navigateTo({
-  //   url: `/pages/search/result?keyword=${encodeURIComponent(searchTerm)}`
-  // })
+  console.log(encodeURIComponent(query))
+
+  // // 跳转到搜索结果页
+  uni.navigateTo({
+    url: `/subpackages/search/search-result?value=${query}`
+  })
 }
 
 // 删除单条历史记录
@@ -97,6 +110,14 @@ const clearHistory = () => {
     }
   })
 }
+
+// 将结果发送到到搜索结果页
+const toSearch = (item) => {
+  searchQuery.value = item
+  search()
+}
+
+
 </script>
 
 <style lang="scss">
@@ -133,7 +154,7 @@ const clearHistory = () => {
 .search-input {
   flex: 1;
   height: 100%;
-  font-size: px2rpx(15);
+  font-size: px2rpx(8);
   color: #333;
   padding: 0;
   background: transparent;

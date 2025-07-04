@@ -1,29 +1,22 @@
 <template>
   <view class="searchresult-container">
     <!-- 自定义顶部导航栏 -->
-    <view class="custom-navbar">
-      <view class="search-box">
-        <uni-icons class="search-icon" type="search" size="18" color="#999"></uni-icons>
-        <input
-            class="search-input"
-            v-model="value"
-            placeholder="请输入商品名称"
-            placeholder-style="color: #999;"
-            @confirm="search"
-        />
+    <view class="header">
+      <text class="header-text">搜索结果</text>
+      <!-- 排序选择器 - 优化样式 -->
+      <view class="sort-selector" v-if="goods.length > 0">
+        <picker :value="sortIndex" :range="sortOptions" range-key="text" @change="changeSort">
+          <view class="picker-content">
+            <text class="sort-text">{{ sortOptions[sortIndex].text }}</text>
+            <uni-icons type="arrowdown" size="16" color="#666"></uni-icons>
+          </view>
+        </picker>
       </view>
-      <view class="cancel-btn" @tap="$router.back()">取消</view>
+
+
     </view>
 
-    <!-- 排序选择器 -->
-    <view class="sort-selector" v-if="goods.length > 0">
-      <picker :value="sortIndex" :range="sortOptions" range-key="text" @change="changeSort">
-        <view class="picker">
-          <text>{{ sortOptions[sortIndex].text }}</text>
-          <uni-icons type="arrowdown" size="14" color="#666"></uni-icons>
-        </view>
-      </picker>
-    </view>
+
 
     <!-- 商品列表 -->
     <scroll-view class="goods-list" scroll-y>
@@ -35,7 +28,7 @@
 
       <view v-else class="goods-container">
         <view class="goods-item" v-for="item in goods" :key="item.id">
-          <image class="goods-image" :src="item.thumb_path || '/static/images/default.png'" mode="aspectFill"/>
+          <image class="goods-image" :src="item.img_url" mode="aspectFill"/>
           <view class="goods-info">
             <view class="goods-title">{{ item.title }}</view>
             <view class="price-section">
@@ -50,16 +43,15 @@
         </view>
       </view>
     </scroll-view>
+    <BackBtn/>
   </view>
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue';
-import {useRoute} from 'vue-router';
+import {ref} from 'vue';
 import GoodsApi from '@/api/goods';
-
-// 使用路由
-const route = useRoute();
+import {onLoad} from "@dcloudio/uni-app";
+import BackBtn from "@/components/BackBtn.vue";
 
 // 响应式数据
 const value = ref('');
@@ -73,7 +65,9 @@ const sortOptions = ref([
 
 // 搜索商品
 const search = async () => {
-  if (!value.value.trim()) {
+  const query = value.value.trim()
+
+  if (!query) {
     uni.showToast({
       title: '请输入搜索关键词',
       icon: 'none'
@@ -83,10 +77,10 @@ const search = async () => {
 
   try {
     const res = await GoodsApi.searchGoods({
-      value: value.value,
+      value: query,
       sort: sortOptions.value[sortIndex.value].value,
       page: 1,
-      pagesize: 20
+      pagesize: 10
     });
     goods.value = res;
   } catch (error) {
@@ -101,16 +95,17 @@ const search = async () => {
 
 // 切换排序方式
 const changeSort = (e) => {
+  console.log('sortIndex=',e.detail.value)
   sortIndex.value = e.detail.value;
   search();
 };
 
 // 初始化
-onMounted(() => {
-  // 从路由参数中获取初始搜索值
-  if (route.query.value) {
-    value.value = route.query.value;
-    search();
+onLoad((options) => {
+  if (options.value) {
+    value.value = options.value
+    console.log('value=',value.value)
+    search()
   }
 });
 </script>
@@ -122,57 +117,48 @@ onMounted(() => {
   height: 100vh;
   background-color: #f5f7fa;
 
-  .custom-navbar {
-    display: flex;
-    align-items: center;
-    padding: 12rpx 20rpx;
+  /* 顶部标题栏样式 */
+  .header {
+    padding: 20rpx 30rpx;
     background-color: #fff;
-    box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+    margin-top: px2rpx(20);
+    border-bottom: 1rpx solid #f0f0f0;
 
-    .search-box {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      height: 70rpx;
-      padding: 0 20rpx;
-      background-color: #f5f5f5;
-      border-radius: 35rpx;
-      margin-right: 20rpx;
-
-      .search-icon {
-        margin-right: 10rpx;
-      }
-
-      .search-input {
-        flex: 1;
-        height: 100%;
-        font-size: 28rpx;
-      }
-    }
-
-    .cancel-btn {
-      font-size: 30rpx;
+    .header-text {
+      font-size: 36rpx;
+      font-weight: bold;
       color: #333;
+      line-height: 1.5;
     }
   }
 
+  /* 排序选择器样式 */
   .sort-selector {
-    padding: 20rpx;
+    padding: 16rpx 30rpx;
     background-color: #fff;
-    border-bottom: 1rpx solid #eee;
+    border-bottom: 1rpx solid #f0f0f0;
+    display: flex;
+    justify-content: flex-end;
 
-    .picker {
+    .picker-content {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      font-size: 26rpx;
-      color: #666;
+      padding: 8rpx 16rpx;
+      background-color: #f7f7f7;
+      border-radius: 30rpx;
 
-      text {
+      .sort-text {
+        font-size: 26rpx;
+        color: #666;
         margin-right: 8rpx;
       }
+
+      &:active {
+        background-color: #eee;
+      }
     }
   }
+
 
   .goods-list {
     flex: 1;
