@@ -1,5 +1,6 @@
 <template>
   <view class="searchresult-container">
+    <NavLogo />
     <!-- 自定义顶部导航栏 -->
     <view class="header">
       <text class="header-text">搜索结果</text>
@@ -7,17 +8,12 @@
       <view class="sort-selector" v-if="goods.length > 0">
         <picker :value="sortIndex" :range="sortOptions" range-key="text" @change="changeSort">
           <view class="picker-content">
-            <text class="sort-text">{{ sortOptions[sortIndex].text }}</text>
+            <text class="sort-text">{{ sortOptions[sortIndex].text }} ▼</text>
             <uni-icons type="arrowdown" size="16" color="#666"></uni-icons>
           </view>
         </picker>
       </view>
-
-
     </view>
-
-
-
     <!-- 商品列表 -->
     <scroll-view class="goods-list" scroll-y>
       <view v-if="goods.length === 0" class="empty-container">
@@ -42,6 +38,9 @@
           </view>
         </view>
       </view>
+      <view class="no-more">
+        <text class="no-more-text">———— 没有更多了 ————</text>
+      </view>
     </scroll-view>
     <BackBtn/>
   </view>
@@ -52,6 +51,7 @@ import {ref} from 'vue';
 import GoodsApi from '@/api/goods';
 import {onLoad} from "@dcloudio/uni-app";
 import BackBtn from "@/components/BackBtn.vue";
+import NavLogo from "@/components/NavLogo.vue";
 
 // 响应式数据
 const value = ref('');
@@ -115,13 +115,15 @@ onLoad((options) => {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #f5f7fa;
+  background-color: #FFFFFF;
 
   /* 顶部标题栏样式 */
   .header {
-    padding: 20rpx 30rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20rpx 60rpx 30rpx;
     background-color: #fff;
-    margin-top: px2rpx(20);
     border-bottom: 1rpx solid #f0f0f0;
 
     .header-text {
@@ -150,6 +152,7 @@ onLoad((options) => {
       .sort-text {
         font-size: 26rpx;
         color: #666;
+        padding-left: 8rpx;
         margin-right: 8rpx;
       }
 
@@ -263,6 +266,13 @@ onLoad((options) => {
           }
         }
       }
+    }
+
+    .no-more{
+      width: 100vw;
+      height: px2rpx(20);
+      text-align: center;
+      color: #555555;
     }
   }
 }

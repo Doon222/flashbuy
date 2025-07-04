@@ -51,7 +51,7 @@
 
     <view class="my-history">
         <view>
-          暂无数据
+          请先登录
         </view>
     </view>
 

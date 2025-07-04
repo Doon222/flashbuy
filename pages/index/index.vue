@@ -78,7 +78,7 @@
         <uni-load-more status="loading"></uni-load-more>
       </view>
       <view v-if="!hasMore && goodsList.length > 0" class="no-more">
-        <text>—— 已加载全部数据 ——</text>
+        <text>—— 没有更多了 ——</text>
       </view>
     </scroll-view>
 
