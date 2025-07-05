@@ -30,26 +30,26 @@
         <view class="more-items">
           <view class="more-item">
             <view>
-              <image src="/static/home/sales.png" mode="aspectFill"></image>
+              <image src="/static/images/sales.png" mode="aspectFill"></image>
             </view>
 
             <text>排行榜</text>
           </view>
           <view class="more-item">
             <view>
-              <image src="/static/home/digital.png" mode="aspectFill"></image>
+              <image src="/static/images/digital.png" mode="aspectFill"></image>
             </view>
             <text>数码电器</text>
           </view>
           <view class="more-item">
             <view>
-              <image src="/static/home/furniture.png" mode="aspectFill"></image>
+              <image src="/static/images/furniture.png" mode="aspectFill"></image>
             </view>
             <text>家居好物</text>
           </view>
           <view class="more-item">
             <view>
-              <image src="/static/home/ranking.png" mode="aspectFill" @click="goToCategory"></image>
+              <image src="/static/images/ranking.png" mode="aspectFill" @click="goToCategory"></image>
             </view>
             <text>更多商品</text>
           </view>

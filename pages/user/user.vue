@@ -3,19 +3,19 @@
     <NavLogo/>
     <!-- 用户信息头部 -->
     <view class="user-header">
-      <image src="/static/user/default-avatar.jpg" class="avatar"/>
+      <image src="/static/images/default-avatar.jpg" class="avatar"/>
       <view class="user-info">
         <text class="username">请先登录/注册您的账号</text>
         <button class="login-btn" @click="goToLogin">点击登录</button>
       </view>
-      <image class="setting" src="/static/user/set.png" @click="goToSetting"/>
+      <image class="setting" src="/static/images/set.png" @click="goToSetting"/>
     </view>
 
     <!-- 认证入口 -->
     <view class="auth-container">
       <view class="auth-card">
         <view class="auth-left">
-          <image src="/static/user/shop-car.png" class="auth-icon" mode="aspectFit"/>
+          <image src="/static/images/shop-car.png" class="auth-icon" mode="aspectFit"/>
           <text class="auth-title">登录即享丰厚福利</text>
         </view>
         <view class="auth-right">
@@ -31,7 +31,7 @@
             <text class="card-title">订单</text>
             <text class="card-subtitle">订单管理</text>
           </view>
-          <image src="/static/user/order.png" class="card-icon" mode="aspectFit"/>
+          <image src="/static/images/order.png" class="card-icon" mode="aspectFit"/>
         </view>
       </view>
       <view class="tool-card" @click="goToAddress">
@@ -40,7 +40,7 @@
             <text class="card-title">地址</text>
             <text class="card-subtitle">地址管理</text>
           </view>
-          <image src="/static/user/address.png" class="card-icon" mode="aspectFit"/>
+          <image src="/static/images/address.png" class="card-icon" mode="aspectFit"/>
         </view>
       </view>
     </view>

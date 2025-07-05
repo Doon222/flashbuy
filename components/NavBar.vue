@@ -3,7 +3,7 @@
     <!-- 左侧返回按钮 -->
     <view class="nav-left" @click="handleBack">
       <slot name="left">
-        <image v-if="showBack" src="/static/detail/back.png" class="back-icon" />
+        <image v-if="showBack" src="/static/images/back.png" class="back-icon" />
       </slot>
     </view>
 

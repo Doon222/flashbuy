@@ -6,8 +6,7 @@
       <button @click="mockAddCart">模拟添加商品</button>
       <button @click="clearCart">清空购物车</button>
       <button @click="testBadge">测试徽标</button>
-      <button @click="testGetGoodsImg">测试根据id查询商品轮播图</button>
-      <button @click="testGetGoodsDetail">测试根据id查询商品详情</button>
+      <button @click="login">测试登录</button>
 
     </view>
 
@@ -18,7 +17,7 @@
 
 import { useCartStore } from '@/stores/modules/cart.store'
 import NavLogo from "@/components/NavLogo.vue";
-import GoodsApi from '@/api/goods'
+import UserApi from '../../api/user'
 
 const cartStore = useCartStore()
 
@@ -45,13 +44,11 @@ const testBadge = () => {
 
 }
 
-const testGetGoodsImg = async () => {
-  const res = await GoodsApi.getGoodsImages(87)
-  console.log(res)
-}
-
-const testGetGoodsDetail = async () => {
-  const res = await GoodsApi.getGoodsDetail(87)
+const login = async () => {
+  const res = await UserApi.login({
+    username: 'fwzlw',
+    password: '123456'
+  })
   console.log(res)
 }
 

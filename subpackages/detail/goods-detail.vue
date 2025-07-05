@@ -4,7 +4,7 @@
 
     <view class="custom-navbar">
       <view class="nav-left" @click="goBack">
-        <image src="/static/detail/back.png" class="nav-icon"></image>
+        <image src="/static/images/back.png" class="nav-icon"></image>
       </view>
       <view class="nav-title">商品详情</view>
       <view class="nav-right"></view>
@@ -84,7 +84,7 @@
       <view class="spec-card">
         <view class="close-view">
           <view class="close-btn" @click="closePopup">
-            <image src="/static/detail/close.png" class="icon-image close"></image>
+            <image src="/static/images/close.png" class="icon-image close"></image>
           </view>
         </view>
 
@@ -102,7 +102,7 @@
             <view class="quantity-label">数量</view>
             <view class="quantity-control">
               <view class="quantity-btn" @click="decreaseQuantity">
-                <image src="/static/detail/minus.png" class="icon-image"></image>
+                <image src="/static/images/minus.png" class="icon-image"></image>
               </view>
               <input
                   class="quantity-input"
@@ -111,7 +111,7 @@
                   :max="goodsDetail.stock_quantity"
               >
               <view class="quantity-btn" @click="increaseQuantity">
-                <image src="/static/detail/plus.png" class="icon-image"></image>
+                <image src="/static/images/plus.png" class="icon-image"></image>
               </view>
             </view>
           </view>
