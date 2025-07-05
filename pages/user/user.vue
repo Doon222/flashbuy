@@ -5,7 +5,8 @@
     <view class="user-header">
       <image src="/static/images/default-avatar.jpg" class="avatar"/>
       <view class="user-info">
-        <text class="username">请先登录/注册您的账号</text>
+        <text class="username" v-if="userStore.isLoggedIn">{{userStore.userInfo.username}}</text>
+        <text class="username" v-else>请先登录/注册您的账号</text>
         <button class="login-btn" @click="goToLogin">点击登录</button>
       </view>
       <image class="setting" src="/static/images/set.png" @click="goToSetting"/>
@@ -59,10 +60,11 @@
 </template>
 
 <script setup>
+import {useUserStore} from "@/stores/modules/user.store";
 import NavLogo from "@/components/NavLogo.vue";
 import {ref} from "vue";
 
-const isLogin = ref(false);
+const userStore = useUserStore();
 
 const goToLogin = () => {
   uni.navigateTo({
@@ -71,7 +73,7 @@ const goToLogin = () => {
 }
 
 const goToOrder = () => {
-  if (!isLogin.value) {
+  if (!userStore.isLoggedIn) {
     uni.showToast({
       title: '请先登录在使用订单功能',
       icon: 'none'
@@ -84,7 +86,7 @@ const goToOrder = () => {
 }
 
 const goToAddress = () => {
-  if (!isLogin.value) {
+  if (!userStore.isLoggedIn) {
     uni.showToast({
       title: '请先登录再使用地址功能',
       icon: 'none'

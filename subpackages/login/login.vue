@@ -46,14 +46,20 @@
 <script setup>
 import {ref, computed} from 'vue'
 import UserApi from "@/api/user";
+import {useUserStore} from "@/stores/modules/user.store";
+import {useCartStore} from "@/stores/modules/cart.store";
 import NavLogo from "@/components/NavLogo.vue";
 import NavBar from "@/components/NavBar.vue";
+
 
 // 表单数据
 const username = ref('')
 const password = ref('')
 const usernameError = ref('')
 const passwordError = ref('')
+
+const userStore = useUserStore()
+const cartStore = useCartStore()
 
 // 验证用户名
 const validateUsername = () => {
@@ -108,6 +114,12 @@ const handleLogin = async () => {
       title: '登录成功',
       icon: 'success'
     })
+
+    console.log(res)
+
+    // 将用户登录信息存入本地
+    userStore.login(res)
+
 
     uni.navigateBack()
     // 清除用户输入信息

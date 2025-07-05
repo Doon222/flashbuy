@@ -164,7 +164,7 @@ const handleRegister = async () => {
 
 // 跳转到登录页面
 const navigateToLogin = () => {
-  uni.navigateTo({
+  uni.redirectTo({
     url: '/subpackages/login/login'
   })
 }

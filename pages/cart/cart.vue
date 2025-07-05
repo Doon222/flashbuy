@@ -7,6 +7,7 @@
       <button @click="clearCart">清空购物车</button>
       <button @click="testBadge">测试徽标</button>
       <button @click="login">测试登录</button>
+      <button @click="testLogin">是否登录</button>
 
     </view>
 
@@ -18,8 +19,10 @@
 import { useCartStore } from '@/stores/modules/cart.store'
 import NavLogo from "@/components/NavLogo.vue";
 import UserApi from '../../api/user'
+import { useUserStore } from '@/stores/modules/user.store'
 
 const cartStore = useCartStore()
+const userStore = useUserStore()
 
 const mockAddCart = () => {
   // 使用action而不是直接操作state
@@ -52,6 +55,9 @@ const login = async () => {
   console.log(res)
 }
 
+const testLogin = async () => {
+  console.log(userStore.isLoggedIn)
+}
 </script>
 
 

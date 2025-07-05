@@ -28,7 +28,7 @@
           <image src="/static/images/gift.png" class="item-icon"></image>
           <text class="item-title">彩蛋功能</text>
         </view>
-        <image src="/static/settings/arrow.png" class="item-arrow"></image>
+        <image src="/static/images/arrow.png" class="item-arrow"></image>
       </view>
 
       <!-- 新增的无意义小功能 -->
@@ -74,9 +74,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {ref} from 'vue'
+import {useUserStore} from "@/stores/modules/user.store";
 import NavLogo from "@/components/NavLogo.vue"
 import NavBar from "@/components/NavBar.vue"
+import {onUnload} from "@dcloudio/uni-app";
 
 // 版本号
 const version = ref('1.2.0')
@@ -95,10 +97,20 @@ const funFacts = ref([
   "第一台电脑重达27吨"
 ])
 
+const userStore = useUserStore()
+
+let timer = null
+
 // 跳转到修改密码页面
 const navigateToChangePassword = () => {
   // 判断是否登录
-
+  if (!userStore.isLoggedIn) {
+    uni.showToast({
+      title: '您还没有登录',
+      icon: 'none'
+    })
+    return
+  }
   uni.navigateTo({
     url: '/subpackages/setting/pwd-setting'
   })
@@ -165,34 +177,52 @@ const closeEasterEgg = () => {
 
 // 显示退出登录确认框
 const showLogoutConfirm = () => {
-  uni.showModal({
-    title: '提示',
-    content: '确定要退出登录吗？',
-    success: (res) => {
-      if (res.confirm) {
-        logout()
+  if (userStore.isLoggedIn) {
+    uni.showModal({
+      title: '提示',
+      content: '确定要退出登录吗？',
+      success: (res) => {
+        if (res.confirm) {
+          logout()
+        }
       }
-    }
-  })
-}
+    })
+  } else {
+    uni.showToast({
+      title: '您还没有登录',
+      icon: 'none'
+    })
+  }
 
 // 退出登录
-const logout = () => {
-  uni.showLoading({
-    title: '正在退出...'
-  })
+  const logout = () => {
+    uni.showLoading({
+      title: '正在退出...'
+    })
 
-  // 模拟退出登录API调用
-  setTimeout(() => {
+    // 退出登录
     uni.hideLoading()
     // 清除登录状态
-    uni.removeStorageSync('token')
-    // 跳转到登录页
-    uni.reLaunch({
-      url: '/pages/login/login'
+    userStore.logout()
+
+    uni.showToast({
+      title: '退出登录成功',
+      icon: 'success'
     })
-  }, 1000)
+
+    // 跳转到登录页
+    timer = setTimeout(() => {
+      uni.redirectTo({
+        url: '/subpackages/login/login'
+      })
+    }, 1500)
+  }
 }
+
+ onUnload(() => {
+  clearTimeout(timer)
+})
+
 </script>
 
 <style lang="scss" scoped>
