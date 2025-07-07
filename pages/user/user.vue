@@ -5,9 +5,10 @@
     <view class="user-header">
       <image src="/static/images/default-avatar.jpg" class="avatar"/>
       <view class="user-info">
-        <text class="username" v-if="userStore.isLoggedIn">{{userStore.userInfo.username}}</text>
+        <text class="username" v-if="userStore.isLoggedIn">{{ userStore.userInfo.username }}</text>
         <text class="username" v-else>请先登录/注册您的账号</text>
-        <button class="login-btn" @click="goToLogin">点击登录</button>
+        <text v-if="userStore.isLoggedIn">欢迎回来</text>
+        <button class="login-btn" @click="goToLogin" v-else>点击登录</button>
       </view>
       <image class="setting" src="/static/images/set.png" @click="goToSetting"/>
     </view>
@@ -15,12 +16,17 @@
     <!-- 认证入口 -->
     <view class="auth-container">
       <view class="auth-card">
-        <view class="auth-left">
+        <view class="auth-left" v-if="!userStore.isLoggedIn">
           <image src="/static/images/shop-car.png" class="auth-icon" mode="aspectFit"/>
           <text class="auth-title">登录即享丰厚福利</text>
         </view>
+        <view class="auth-left" v-else>
+          <image src="/static/images/shop-car.png" class="auth-icon" mode="aspectFit"/>
+          <text class="auth-title">前往享受丰厚福利</text>
+        </view>
         <view class="auth-right">
-          <text class="auth-btn" @click="goToLogin">立即登录 ></text>
+          <text class="auth-btn" @click="goToLogin" v-if="!userStore.isLoggedIn">立即登录 ></text>
+          <text class="auth-btn" @click="goToEvent" v-else>立即前往 ></text>
         </view>
       </view>
     </view>
@@ -46,25 +52,75 @@
       </view>
     </view>
 
-    <view class="recommend">
-      <text>———— 我的足迹 ————</text>
-    </view>
+    <view class="history-section">
+      <view class="section-title">———— 我的足迹 ————</view>
 
-    <view class="my-history">
-      <view>
-        请先登录
+      <view class="history-box" v-if="userStore.isLoggedIn">
+        <view v-if="historyList.length > 0">
+          <view
+              v-for="(item) in historyList"
+              :key="item.id"
+              class="history-item"
+              @click="gotoDetail(item.goods_id)"
+          >
+            <image class="goods-image" :src="item.img_url" mode="aspectFill"/>
+            <view class="goods-info">
+              <text class="goods-title">{{ item.title }}</text>
+              <view class="goods-meta">
+                <text class="price">¥{{ item.sell_price }}</text>
+                <text class="sales">{{ item.buy }}人购买</text>
+              </view>
+            </view>
+            <uni-icons type="arrowright" size="20" color="#999"></uni-icons>
+          </view>
+        </view>
+        <view v-else class="empty-history">
+          <text>暂无浏览记录</text>
+        </view>
+      </view>
+
+      <view v-else class="login-tip">
+        <text>请先登录查看浏览记录</text>
       </view>
     </view>
-
   </view>
 </template>
 
 <script setup>
 import {useUserStore} from "@/stores/modules/user.store";
+import HistoryApi from "@/api/history";
 import NavLogo from "@/components/NavLogo.vue";
 import {ref} from "vue";
+import {onLoad} from "@dcloudio/uni-app";
 
 const userStore = useUserStore();
+
+const historyList = ref([])
+
+onLoad(() => {
+  if (userStore.isLoggedIn) {
+    initData()
+  }
+})
+
+const initData = async () => {
+  try {
+    const res = await HistoryApi.getHistory()
+    console.log(res)
+    historyList.value = res || []
+  } catch (error) {
+    uni.showToast({
+      title: '加载历史记录失败',
+      icon: 'none'
+    })
+  }
+}
+
+const gotoDetail = (goodsId) => {
+  uni.navigateTo({
+    url: `/subpackages/detail/goods-detail?value=${goodsId}`
+  })
+}
 
 const goToLogin = () => {
   uni.navigateTo({
@@ -104,6 +160,12 @@ const goToSetting = () => {
   })
 }
 
+const goToEvent = () => {
+  uni.showToast({
+    title: '功能正在开发中',
+    icon: 'none'
+  })
+}
 </script>
 
 
@@ -128,7 +190,7 @@ const goToSetting = () => {
   .setting {
     width: px2rpx(15);
     height: px2rpx(15);
-
+    margin-left: 40rpx;
 
   }
 
@@ -144,6 +206,7 @@ const goToSetting = () => {
 .user-info {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   width: px2rpx(100);
   height: px2rpx(35);
 }
@@ -305,5 +368,93 @@ const goToSetting = () => {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.history-section {
+  margin-top: 40rpx;
+  padding: 0 30rpx;
+}
+
+.section-title {
+  text-align: center;
+  color: #555;
+  font-size: 28rpx;
+  margin-bottom: 30rpx;
+}
+
+.history-box {
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  padding: 0 20rpx;
+  margin-top: 60rpx;
+  margin-bottom: 40rpx;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.goods-image {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 8rpx;
+  margin-right: 20rpx;
+}
+
+.goods-info {
+  flex: 1;
+  height: 160rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.goods-title {
+  font-size: 28rpx;
+  color: #333;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.goods-meta {
+  display: flex;
+  align-items: center;
+  margin-top: 20rpx;
+}
+
+.price {
+  font-size: 32rpx;
+  color: #f40;
+  font-weight: bold;
+  margin-right: 20rpx;
+}
+
+.sales {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.empty-history,
+.login-tip {
+  height: 200rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #999;
+  font-size: 28rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  margin-top: 60rpx;
 }
 </style>

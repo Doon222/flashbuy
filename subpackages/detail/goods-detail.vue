@@ -129,9 +129,12 @@
 
 <script setup>
 import {ref} from 'vue';
-import {onLoad} from '@dcloudio/uni-app';
+import {onLoad, onShow} from '@dcloudio/uni-app';
 import GoodsApi from '../../api/goods';
+import HistoryApi from '../../api/history'
+import {useUserStore} from "@/stores/modules/user.store";
 import NavLogo from "@/components/NavLogo.vue";
+
 
 // 商品数据
 const goodsImages = ref([]);
@@ -152,6 +155,7 @@ const quantity = ref(1);
 const actionType = ref('cart');
 const goodsId = ref(0);
 
+const userStore = useUserStore();
 
 // 生命周期
 onLoad((options) => {
@@ -160,6 +164,10 @@ onLoad((options) => {
     initData();
   }
 });
+
+onShow(() => {
+  addHistory()
+})
 
 // 初始化数据
 const initData = async () => {
@@ -223,6 +231,21 @@ const goCart = () => {
   uni.switchTab({
     url: '/pages/cart/cart'
   });
+};
+
+// 添加访问祖籍
+const addHistory = async () => {
+  try {
+    if (!userStore.isLoggedIn) {
+      // 未登录
+      console.log('未登录')
+      return
+    }
+    // 已登录
+    await HistoryApi.addHistory(goodsId.value);
+  } catch (error) {
+    console.error('添加访问记录失败:', error);
+  }
 };
 
 // 格式化时间
@@ -516,7 +539,7 @@ const goBack = () => {
 .spec-card {
   background: #fff;
   border-radius: 30rpx 30rpx 0 0;
-  padding: 30rpx ;
+  padding: 30rpx;
   padding-top: 60rpx;
 }
 

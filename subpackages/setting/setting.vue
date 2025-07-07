@@ -211,15 +211,13 @@ const showLogoutConfirm = () => {
     })
 
     // 跳转到登录页
-    timer = setTimeout(() => {
-      uni.redirectTo({
-        url: '/subpackages/login/login'
-      })
-    }, 1500)
+    uni.redirectTo({
+      url: '/subpackages/login/login'
+    })
   }
 }
 
- onUnload(() => {
+onUnload(() => {
   clearTimeout(timer)
 })
 

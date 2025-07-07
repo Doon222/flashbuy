@@ -3,11 +3,10 @@
   <view>
     <NavLogo />
     <view>
-      <button @click="mockAddCart">模拟添加商品</button>
       <button @click="clearCart">清空购物车</button>
-      <button @click="testBadge">测试徽标</button>
-      <button @click="login">测试登录</button>
+      <button @click="testBadge">测试徽标</button>>
       <button @click="testLogin">是否登录</button>
+      <button @click="testHistory">测试浏览历史记录</button>
 
     </view>
 
@@ -18,20 +17,11 @@
 
 import { useCartStore } from '@/stores/modules/cart.store'
 import NavLogo from "@/components/NavLogo.vue";
-import UserApi from '../../api/user'
+import HistoryApi from '@/api/history'
 import { useUserStore } from '@/stores/modules/user.store'
 
 const cartStore = useCartStore()
 const userStore = useUserStore()
-
-const mockAddCart = () => {
-  // 使用action而不是直接操作state
-  cartStore.addItem({
-    id: Date.now(),
-    name: '测试商品',
-    quantity: Math.floor(Math.random() * 5) + 1
-  })
-}
 
 const clearCart = () => {
   // 使用action
@@ -47,16 +37,14 @@ const testBadge = () => {
 
 }
 
-const login = async () => {
-  const res = await UserApi.login({
-    username: 'fwzlw',
-    password: '123456'
-  })
-  console.log(res)
-}
-
 const testLogin = async () => {
   console.log(userStore.isLoggedIn)
+}
+
+const testHistory = async () => {
+  // 获取浏览记录
+  const res = await HistoryApi.getHistory()
+  console.log(res)
 }
 </script>
 

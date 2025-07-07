@@ -59,7 +59,6 @@ const usernameError = ref('')
 const passwordError = ref('')
 
 const userStore = useUserStore()
-const cartStore = useCartStore()
 
 // 验证用户名
 const validateUsername = () => {
@@ -114,18 +113,22 @@ const handleLogin = async () => {
       title: '登录成功',
       icon: 'success'
     })
-
-    console.log(res)
-
     // 将用户登录信息存入本地
     userStore.login(res)
-
 
     uni.navigateBack()
     // 清除用户输入信息
     username.value = ''
     password.value = ''
-
+  }else {
+    // 登录失败
+    uni.hideLoading()
+    uni.showToast({
+      title: res.message,
+      icon: 'error'
+    })
+    username.value = ''
+    password.value = ''
   }
 }
 
