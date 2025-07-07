@@ -55,7 +55,16 @@
         </view>
         <image src="/static/images/arrow.png" class="item-arrow"></image>
       </view>
+
+
+    <view class="setting-item" @click="showFeedback">
+      <view class="item-left">
+        <image src="/static/images/feedback.png" class="item-icon"></image>
+        <text class="item-title"> 提交反馈</text>
+      </view>
+      <image src="/static/images/arrow.png" class="item-arrow"></image>
     </view>
+  </view>
 
     <!-- 退出登录按钮 -->
     <view class="logout-btn" @click="showLogoutConfirm">
@@ -215,6 +224,15 @@ const showLogoutConfirm = () => {
       url: '/subpackages/login/login'
     })
   }
+}
+
+const showFeedback = () => {
+  uni.showModal( {
+    title: '提交反馈',
+    content: '该功能开发中',
+    confirmButtonText: '提交',
+    cancelButtonText: '取消',
+  })
 }
 
 onUnload(() => {

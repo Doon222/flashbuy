@@ -91,7 +91,7 @@ import {useUserStore} from "@/stores/modules/user.store";
 import HistoryApi from "@/api/history";
 import NavLogo from "@/components/NavLogo.vue";
 import {ref} from "vue";
-import {onLoad} from "@dcloudio/uni-app";
+import {onLoad, onShow} from "@dcloudio/uni-app";
 
 const userStore = useUserStore();
 
@@ -100,6 +100,14 @@ const historyList = ref([])
 onLoad(() => {
   if (userStore.isLoggedIn) {
     initData()
+    console.log('historyList=', historyList.value)
+  }
+})
+
+onShow(() => {
+  if (userStore.isLoggedIn) {
+    initData()
+    console.log('historyList=', historyList.value)
   }
 })
 

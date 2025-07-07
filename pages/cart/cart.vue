@@ -4,10 +4,11 @@
     <NavLogo />
     <view>
       <button @click="clearCart">清空购物车</button>
-      <button @click="testBadge">测试徽标</button>>
-      <button @click="testLogin">是否登录</button>
-      <button @click="testHistory">测试浏览历史记录</button>
-
+      <button @click="testBadge">测试徽标</button>
+      <button @click="testGetAddress">测试获取地址列表</button>
+      <button @click="testAddAddress">测试添加地址</button>
+      <button @click="testUpdateAddress">测试修改地址</button>
+      <button @click="testDelAddress">测试删除地址</button>
     </view>
 
   </view>
@@ -17,11 +18,9 @@
 
 import { useCartStore } from '@/stores/modules/cart.store'
 import NavLogo from "@/components/NavLogo.vue";
-import HistoryApi from '@/api/history'
-import { useUserStore } from '@/stores/modules/user.store'
+import AddressApi from '@/api/address'
 
 const cartStore = useCartStore()
-const userStore = useUserStore()
 
 const clearCart = () => {
   // 使用action
@@ -37,15 +36,27 @@ const testBadge = () => {
 
 }
 
-const testLogin = async () => {
-  console.log(userStore.isLoggedIn)
-}
-
-const testHistory = async () => {
-  // 获取浏览记录
-  const res = await HistoryApi.getHistory()
+const testGetAddress = async () => {
+  const res = await AddressApi.getAddressList()
   console.log(res)
 }
+
+const testAddAddress = async () => {
+  const res = await AddressApi.addAddress()
+  console.log(res)
+}
+
+const testUpdateAddress = async () => {
+
+  const res = await AddressApi.updateAddress()
+  console.log(res)
+}
+
+const testDelAddress = async () => {
+  const res = await AddressApi.delAddress(1975)
+  console.log(res)
+}
+
 </script>
 
 
