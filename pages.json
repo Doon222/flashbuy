@@ -60,6 +60,9 @@
       "root": "subpackages/order",
       "pages": [
         {
+          "path": "order-detail"
+        },
+        {
           "path": "order"
         }
       ]

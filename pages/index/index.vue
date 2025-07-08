@@ -91,7 +91,8 @@ import carouselAPI from '/api/carousel'
 import goodsAPI from '/api/goods'
 import NavLogo from "@/components/NavLogo.vue";
 import UniLoadMore from '@dcloudio/uni-ui/lib/uni-load-more/uni-load-more.vue'
-import {onLoad} from '@dcloudio/uni-app'
+import {onLoad, onShow} from '@dcloudio/uni-app'
+import {showCarBadge} from "@/utils/showCarBadge";
 
 const carouselList = ref([])
 const goodsList = ref([])
@@ -105,6 +106,10 @@ const hasMore = ref(true)
 onLoad(() => {
   fetchCarouselData()
   fetchGoodsData(1) // 初始加载第一页
+})
+
+onShow(()=>{
+  showCarBadge()
 })
 
 // 下拉刷新

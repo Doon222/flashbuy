@@ -60,7 +60,7 @@
     <!-- 底部操作栏 -->
     <view class="action-bar">
       <view class="action-icon" @click="goCart">
-        <image src="/static/tabbar/cart-active.png" class="icon-image"></image>
+          <image src="/static/tabbar/cart-active.png" class="icon-image"></image>
         <text>购物车</text>
       </view>
       <view class="action-buttons">
@@ -132,8 +132,10 @@ import {ref} from 'vue';
 import {onLoad, onShow} from '@dcloudio/uni-app';
 import GoodsApi from '../../api/goods';
 import HistoryApi from '../../api/history'
+import {useCartStore} from "@/stores/modules/cart.store";
 import {useUserStore} from "@/stores/modules/user.store";
 import NavLogo from "@/components/NavLogo.vue";
+import CartBadge from "@/components/CartBadge.vue";
 
 
 // 商品数据
@@ -156,6 +158,7 @@ const actionType = ref('cart');
 const goodsId = ref(0);
 
 const userStore = useUserStore();
+const cartStore = useCartStore();
 
 // 生命周期
 onLoad((options) => {
@@ -218,12 +221,29 @@ const closePopup = () => {
 // 确认操作
 const confirmAction = () => {
   closePopup();
-  uni.showToast({
-    title: actionType.value === 'cart'
-        ? `已添加${quantity.value}件到购物车`
-        : `已购买${quantity.value}件商品`,
-    icon: 'success'
-  });
+  // 构建商品对象
+  const item = {
+    id: goodsDetail.value.id,
+    number: quantity.value,
+    selected: true,
+    price: goodsDetail.value.sell_price,
+  };
+
+  if (actionType.value === 'cart') {
+    // 加入购物车
+    cartStore.addItem(item);
+    // 显示二次确认弹窗
+    uni.showToast({
+      title: '商品已成功加购',
+      icon: 'success'
+    });
+  } else {
+    // 立即购买逻辑（根据需求自行实现）
+    uni.showToast({
+      title: `已购买${quantity.value}件商品`,
+      icon: 'success'
+    });
+  }
 };
 
 // 跳转购物车
@@ -502,6 +522,7 @@ const goBack = () => {
   width: 120rpx;
   font-size: 24rpx;
   color: #666;
+  position: relative;
 }
 
 .icon-image {

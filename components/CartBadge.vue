@@ -1,16 +1,15 @@
 <!-- components/CartBadge.vue -->
 <script setup>
-import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/modules/cart.store'
+const cartStore = useCartStore()
 
-const { totalCount } = storeToRefs(useCartStore())
 </script>
 
 <template>
   <view class="cart-icon">
     <slot></slot>
-    <view v-if="totalCount > 0" class="badge">
-      {{ totalCount > 99 ? '99+' : totalCount }}
+    <view v-if="cartStore.totalCount > 0" class="badge">
+      {{ cartStore.totalCount > 99 ? '99+' : cartStore.totalCount }}
     </view>
   </view>
 </template>
@@ -29,5 +28,6 @@ const { totalCount } = storeToRefs(useCartStore())
   font-size: 10px;
   text-align: center;
   padding: 0 px2rpx(3);
+  z-index: 10;
 }
 </style>

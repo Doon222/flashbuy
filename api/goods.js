@@ -22,4 +22,6 @@ export default {
     // 搜索商品
     searchGoods: ({value, sort, page = 1, pagesize = 10}) => http.get(`${API_BASE}/search`, {value, sort, page, pagesize}),
 
+    // 获取购物车商品
+    getCarGoods: (goods_ids) => http.get(`${API_BASE}/getshopcarlist/${goods_ids}`),
 }

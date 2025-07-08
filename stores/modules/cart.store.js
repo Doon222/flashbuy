@@ -4,6 +4,8 @@ import { useUserStore } from './user.store'
 
 export const useCartStore = defineStore('cart', () => {
     // State
+    // 购物车中的内容
+    // {goods_id,number,selected,price}
     const items = ref([])
 
     // Getters
@@ -70,14 +72,7 @@ export const useCartStore = defineStore('cart', () => {
         strategies: [
             {
                 key: 'cart',
-                paths: ['items'],
-                // 用户登出时自动清空购物车
-                beforeRestore: (context) => {
-                    const userStore = useUserStore()
-                    if (!userStore.isLoggedIn) {
-                        context.store.clearCart()
-                    }
-                }
+                paths: ['items']
             }
         ]
     }

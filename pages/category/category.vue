@@ -85,6 +85,8 @@
 import { ref, onMounted } from 'vue';
 import GoodsApi from '@/api/goods';
 import NavLogo from "@/components/NavLogo.vue";
+import {onShow} from "@dcloudio/uni-app";
+import {showCarBadge} from "@/utils/showCarBadge";
 
 // 响应式数据
 const categories = ref([]);
@@ -143,6 +145,10 @@ const goToGoodsDetail = (goodsId) => {
 onMounted(() => {
   fetchCategories();
 });
+
+onShow(()=>{
+  showCarBadge()
+})
 </script>
 
 <style lang="scss">

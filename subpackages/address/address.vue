@@ -9,6 +9,7 @@
           :key="item.id"
           class="address-item"
           :class="{ 'default-address': item.isDefault }"
+          @click="handleSelectAddress(item)"
       >
         <view class="address-header">
           <text class="name">{{ item.name }}</text>
@@ -79,6 +80,20 @@ import NavBar from "@/components/NavBar.vue";
 // 地址列表数据
 const addressList = ref([])
 
+
+// 点击地址项的处理
+const handleSelectAddress = (address) => {
+  // 判断是否从购物车页面跳转过来
+  const pages = getCurrentPages()
+  const prevPage = pages[pages.length - 2]
+
+  if (prevPage && prevPage.route === 'pages/cart/cart') {
+    // 将选择的地址数据返回给购物车页面
+    uni.$emit('addressSelected', address)
+    uni.navigateBack()
+  }
+}
+
 // 获取地址列表
 const fetchAddressList = async () => {
   try {
@@ -92,7 +107,6 @@ const fetchAddressList = async () => {
   }
 }
 
-// 设置默认地址
 // 设置默认地址
 const handleSetDefault = async (id) => {
   try {
