@@ -5,7 +5,8 @@ import { useUserStore } from '@/stores/modules/user.store'
 const refreshTokenRequest = async () => {
     const userStore = useUserStore()
     try {
-        const [error, res] = await uni.request({
+        // 修改点：去掉解构，直接获取完整响应
+        const response = await uni.request({
             url: baseURL + '/api/refreshToken',
             method: 'POST',
             data: {
@@ -15,6 +16,14 @@ const refreshTokenRequest = async () => {
                 'content-type': 'application/json'
             }
         })
+
+        // 检查响应是否有效
+        if (!response) {
+            throw new Error('刷新token请求无响应')
+        }
+
+        // 获取实际的错误和响应对象
+        const [error, res] = response;
 
         if (error || !res || res.statusCode !== 200) {
             throw new Error(error?.errMsg || '刷新token失败')
@@ -27,7 +36,8 @@ const refreshTokenRequest = async () => {
         return res.data
     } catch (error) {
         console.error('刷新token错误:', error)
-        throw error
+        // 修改点：返回更详细的错误信息
+        throw new Error(`刷新token失败: ${error.message || error}`)
     }
 }
 
@@ -55,7 +65,7 @@ const request = (url, method, data) => {
                     // 处理token过期
                     if (res.statusCode === 401) {
                         try {
-                            // 调用提取的刷新方法
+                            // 调用刷新方法
                             const newTokens = await refreshTokenRequest()
 
                             // 更新store中的token

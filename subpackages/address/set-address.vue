@@ -75,7 +75,7 @@
         <switch
             :checked="formData.isDefault"
             @change="formData.isDefault = $event.detail.value"
-            color="#e88a35"
+            color="#04be02"
         />
       </view>
 
@@ -95,6 +95,9 @@ import NavLogo from "@/components/NavLogo.vue";
 import NavBar from "@/components/NavBar.vue";
 import addressApi from '@/api/address' // 导入API方法
 
+// 导入省市区编码数据
+import areaData from '@/utils/areaData'
+
 const isEdit = ref(false)
 const addressId = ref('')
 
@@ -104,7 +107,7 @@ const formData = reactive({
   tel: '',
   province: '',
   city: '',
-  country: '',
+  county: '',
   areaCode: '',
   addressDetail: '',
   postalCode: '',
@@ -146,15 +149,15 @@ const fetchAddressDetail = async (id) => {
     formData.tel = address.tel
     formData.province = address.province
     formData.city = address.city
-    formData.country = address.country
+    formData.county = address.county
     formData.areaCode = address.areaCode
     formData.addressDetail = address.addressDetail
     formData.postalCode = address.postalCode || ''
     formData.isDefault = address.isDefault || false
 
     // 设置地区显示和picker值
-    selectedRegion.value = `${formData.province} ${formData.city} ${formData.country}`
-    regionValue.value = [formData.province, formData.city, formData.country]
+    selectedRegion.value = `${formData.province} ${formData.city} ${formData.county}`
+    regionValue.value = [formData.province, formData.city, formData.county]
 
   } catch (error) {
     uni.showToast({
@@ -165,6 +168,16 @@ const fetchAddressDetail = async (id) => {
   }
 }
 
+// 查找地区编码
+const findAreaCode = (name, list) => {
+  for (const [code, areaName] of Object.entries(list)) {
+    if (areaName === name) {
+      return code;
+    }
+  }
+  return '';
+}
+
 // 处理地区选择
 const handleRegionChange = (e) => {
   const value = e.detail.value
@@ -173,10 +186,21 @@ const handleRegionChange = (e) => {
   // 更新表单数据
   formData.province = value[0]
   formData.city = value[1]
-  formData.country = value[2]
+  formData.county = value[2]
 
-  // 生成地区代码 (这里简化处理，实际应用中可能需要映射)
-  formData.areaCode = `${value[0]}-${value[1]}-${value[2]}`
+  // 查找对应的地区编码
+  const provinceCode = findAreaCode(value[0], areaData.province_list);
+  const cityCode = findAreaCode(value[1], areaData.city_list);
+  const countyCode = findAreaCode(value[2], areaData.county_list);
+
+  // 生成符合要求的地区代码
+  if (provinceCode && cityCode && countyCode) {
+    formData.areaCode = `${provinceCode}-${cityCode}-${countyCode}`;
+  } else {
+    console.error('地区编码查找失败:', value);
+    // 如果找不到编码，使用名称作为后备方案
+    formData.areaCode = `${value[0]}-${value[1]}-${value[2]}`;
+  }
 
   // 更新显示文本
   selectedRegion.value = value.join(' ')
@@ -194,7 +218,7 @@ const validateForm = () => {
     return false
   }
 
-  if (!formData.province || !formData.city || !formData.country) {
+  if (!formData.province || !formData.city || !formData.county) {
     uni.showToast({ title: '请选择所在地区', icon: 'none' })
     return false
   }
@@ -223,7 +247,7 @@ const submitForm = async () => {
       tel: formData.tel,
       province: formData.province,
       city: formData.city,
-      country: formData.country,
+      county: formData.county,
       areaCode: formData.areaCode,
       addressDetail: formData.addressDetail,
       postalCode: formData.postalCode,
@@ -232,8 +256,7 @@ const submitForm = async () => {
 
     if (isEdit.value) {
       // 编辑地址 - 添加地址ID
-      params.address_id = addressId.value
-      await addressApi.updateAddress(params)
+      await addressApi.updateAddress(addressId.value,params)
       uni.showToast({ title: '地址更新成功' })
     } else {
       // 新增地址

@@ -17,7 +17,7 @@
         </view>
 
         <view class="address-content">
-          <text class="region">{{ item.province }}{{ item.city }}{{ item.country }}</text>
+          <text class="region">{{ item.province }}{{ item.city }}{{ item.county }}</text>
           <text class="detail">{{ item.addressDetail }}</text>
         </view>
 
@@ -93,8 +93,59 @@ const fetchAddressList = async () => {
 }
 
 // 设置默认地址
+// 设置默认地址
 const handleSetDefault = async (id) => {
-  console.log("设置默认地址", id)
+  try {
+    // 找到要设置为默认的地址
+    const targetAddress = addressList.value.find(item => item.id === id);
+
+    if (!targetAddress) return;
+
+    // 如果已经是默认地址，则不做任何操作
+    if (targetAddress.isDefault) {
+      console.log('已经是默认地址，无需设置')
+      return;
+    }
+
+    // 显示加载中状态
+    uni.showLoading({
+      title: '设置中...',
+      mask: true
+    });
+
+    // 构建完整的地址数据
+    const addressData = {
+      name: targetAddress.name,
+      tel: targetAddress.tel,
+      province: targetAddress.province,
+      city: targetAddress.city,
+      county: targetAddress.county,
+      areaCode: targetAddress.areaCode,
+      addressDetail: targetAddress.addressDetail,
+      postalCode: targetAddress.postalCode,
+      isDefault: true  // 设置为1表示默认地址
+    };
+
+    // 调用API更新地址
+    await AddressApi.updateAddress(id,addressData);
+
+    // 重新获取地址列表
+    await fetchAddressList();
+
+    uni.hideLoading();
+    uni.showToast({
+      title: '设置默认地址成功',
+      icon: 'success'
+    });
+
+  } catch (error) {
+    uni.hideLoading();
+    uni.showToast({
+      title: '设置默认地址失败',
+      icon: 'none'
+    });
+    console.error('设置默认地址失败:', error);
+  }
 }
 
 // 删除地址
