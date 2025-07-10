@@ -6,20 +6,31 @@
       "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
     }
   },
-
   "pages": [
     //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
     {
-      "path": "pages/index/index"
+      "path": "pages/index/index",
+      "style": {
+          "navigationStyle": "custom"
+      }
     },
     {
-      "path": "pages/category/category"
+      "path": "pages/category/category",
+      "style": {
+        "navigationStyle": "custom"
+      }
     },
     {
-      "path": "pages/user/user"
+      "path": "pages/user/user",
+      "style": {
+        "navigationStyle": "custom"
+      }
     },
     {
-      "path": "pages/cart/cart"
+      "path": "pages/cart/cart",
+      "style": {
+        "navigationStyle": "custom"
+      }
     }
   ],
   "subPackages": [
@@ -27,9 +38,12 @@
       "root": "subpackages/search",
       "pages": [
         {
-          "path": "search"
-        },{
-          "path": "search-result"
+          "path": "pages/search",
+          "style": {}
+        },
+        {
+          "path": "pages/search-result",
+          "style": {}
         }
       ]
     },
@@ -37,7 +51,12 @@
       "root": "subpackages/detail",
       "pages": [
         {
-          "path": "goods-detail"
+          "path": "pages/goods-detail",
+          "style": {
+            "usingComponents": {
+              "uni-popup": "@dcloudio/uni-ui/lib/uni-popup/uni-popup"
+            }
+          }
         }
       ]
     },
@@ -45,7 +64,8 @@
       "root": "subpackages/login",
       "pages": [
         {
-          "path": "login"
+          "path": "pages/login",
+          "style": {}
         }
       ]
     },
@@ -53,17 +73,21 @@
       "root": "subpackages/register",
       "pages": [
         {
-          "path": "register"
+          "path": "pages/register",
+          "style": {}
         }
       ]
-    },{
+    },
+    {
       "root": "subpackages/order",
       "pages": [
         {
-          "path": "order-detail"
+          "path": "pages/order-detail",
+          "style": {}
         },
         {
-          "path": "order"
+          "path": "pages/order",
+          "style": {}
         }
       ]
     },
@@ -71,9 +95,12 @@
       "root": "subpackages/address",
       "pages": [
         {
-          "path": "address"
-        },{
-          "path": "set-address"
+          "path": "pages/address",
+          "style": {}
+        },
+        {
+          "path": "pages/set-address",
+          "style": {}
         }
       ]
     },
@@ -81,10 +108,16 @@
       "root": "subpackages/setting",
       "pages": [
         {
-          "path": "setting"
+          "path": "pages/setting",
+          "style": {
+            "usingComponents": {
+              "uni-popup": "@dcloudio/uni-ui/lib/uni-popup/uni-popup"
+            }
+          }
         },
         {
-          "path": "pwd-setting"
+          "path": "pages/pwd-setting",
+          "style": {}
         }
       ]
     }
@@ -121,13 +154,22 @@
       }
     ]
   },
-
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarBackgroundColor": "#FFFFFF",
     "backgroundColor": "#F8F8F8",
-    "navigationStyle": "custom"
-
+    "navigationStyle": "custom",
+    "usingComponents": {
+      "NavLogo": "/components/NavLogo",
+      "NavBar": "/components/NavBar",
+      "BackBtn": "/components/BackBtn"
+    }
   },
-  "uniIdRouter": {}
+  "uniIdRouter": {},
+  "preloadRule": {
+    "pages/index/index": {
+      "network": "all",
+      "packages": ["subpackages/detail"]
+    }
+  }
 }

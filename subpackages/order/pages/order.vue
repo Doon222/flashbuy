@@ -212,7 +212,7 @@ const fetchOrders = async () => {
 // 支付订单
 const payOrder = (order) => {
   uni.navigateTo({
-    url: `/subpackages/order/order-detail?order_id=${order.order_id}`
+    url: `/subpackages/order/pages/order-detail?order_id=${order.order_id}`
   })
 };
 
@@ -287,7 +287,7 @@ const deleteOrder = (order) => {
 
 const goToOrderDetail = (order) => {
   uni.navigateTo({
-    url: `/subpackages/order/order-detail?order_id=${order.order_id}`
+    url: `/subpackages/order/pages/order-detail?order_id=${order.order_id}`
   })
 };
 
@@ -301,6 +301,7 @@ onMounted(() => {
 onShow(() => {
   fetchOrders();
 });
+
 </script>
 
 <style lang="scss" scoped>

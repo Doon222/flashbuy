@@ -96,7 +96,7 @@ import NavBar from "@/components/NavBar.vue";
 import addressApi from '@/api/address' // 导入API方法
 
 // 导入省市区编码数据
-import areaData from '@/utils/areaData'
+import areaData from '@/subpackages/address/utils/areaData'
 
 const isEdit = ref(false)
 const addressId = ref('')

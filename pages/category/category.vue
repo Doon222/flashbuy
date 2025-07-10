@@ -137,7 +137,7 @@ const selectCategory = (category) => {
 // 跳转到商品详情
 const goToGoodsDetail = (goodsId) => {
   uni.navigateTo({
-    url: `/subpackages/detail/goods-detail?value=${goodsId}`
+    url: `/subpackages/detail/pages/goods-detail?value=${goodsId}`
   })
 }
 

@@ -121,7 +121,7 @@ const navigateToChangePassword = () => {
     return
   }
   uni.navigateTo({
-    url: '/subpackages/setting/pwd-setting'
+    url: '/subpackages/setting/pages/pwd-setting'
   })
 }
 
@@ -221,7 +221,7 @@ const showLogoutConfirm = () => {
 
     // 跳转到登录页
     uni.redirectTo({
-      url: '/subpackages/login/login'
+      url: '/subpackages/login/pages/login'
     })
   }
 }

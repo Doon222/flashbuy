@@ -3,8 +3,19 @@
     <NavLogo/>
     <!-- 用户信息头部 -->
     <view class="user-header">
-      <image :src="'http://47.98.187.80:5000/' + userStore.userInfo.avatar" class="avatar" v-if="userStore.userInfo.avatar"/>
-      <image src="/static/images/default-avatar.jpg" class="avatar" v-else/>
+      <view class="avatar-container" @click="handleAvatarClick">
+        <image :src="'https://letaoapi.jxsaichuang.com/' + userStore.userInfo.avatar"
+               class="avatar"
+               v-if="userStore.userInfo.avatar"
+               :class="{ 'uploading': isUploading }"/>
+        <image src="/static/images/default-avatar.jpg"
+               class="avatar"
+               v-else
+               :class="{ 'uploading': isUploading }"/>
+        <view class="upload-mask" v-if="isUploading">
+          <uni-icons type="spinner-cycle" size="24" color="#fff" class="spinner"></uni-icons>
+        </view>
+      </view>
       <view class="user-info">
         <text class="username" v-if="userStore.isLoggedIn">{{ userStore.userInfo.username }}</text>
         <text class="username" v-else>请先登录/注册您的账号</text>
@@ -90,25 +101,28 @@
 <script setup>
 import {useUserStore} from "@/stores/modules/user.store";
 import HistoryApi from "@/api/history";
+import UserApi from "@/api/user";
 import NavLogo from "@/components/NavLogo.vue";
 import {ref} from "vue";
-import {onLoad, onShow} from "@dcloudio/uni-app";
+import { onLoad, onShow} from "@dcloudio/uni-app";
+import {showCarBadge} from "@/utils/showCarBadge";
 
 const userStore = useUserStore();
-
-const historyList = ref([])
+const historyList = ref([]);
+const isUploading = ref(false);
 
 onLoad(() => {
   if (userStore.isLoggedIn) {
     initData()
   }
-})
+});
 
 onShow(() => {
   if (userStore.isLoggedIn) {
     initData()
+    showCarBadge()
   }
-})
+});
 
 const initData = async () => {
   try {
@@ -120,19 +134,53 @@ const initData = async () => {
       icon: 'none'
     })
   }
-}
+};
+
+const handleAvatarClick = async () => {
+  if (!userStore.isLoggedIn) {
+    uni.showToast({ title: '请先登录', icon: 'none' });
+    return;
+  }
+
+  try {
+    const res = await uni.chooseImage({ count: 1 });
+    if (!res.tempFilePaths?.length) return;
+
+    isUploading.value = true;
+    const uploadRes = await UserApi.uploadAvatar(res.tempFilePaths[0]);
+
+    if (uploadRes.code === 200) {
+      // 使用login方法更新头像
+      userStore.login({
+        token: userStore.token,
+        refreshToken: userStore.refreshToken,
+        userInfo: {
+          ...userStore.userInfo,
+          avatar: uploadRes.data.avatarUrl
+        }
+      });
+
+      uni.showToast({ title: '上传成功', icon: 'success' });
+    }
+  } catch (error) {
+    uni.showToast({ title: error.message || '上传失败', icon: 'none' });
+  } finally {
+    isUploading.value = false;
+  }
+};
+
 
 const gotoDetail = (goodsId) => {
   uni.navigateTo({
-    url: `/subpackages/detail/goods-detail?value=${goodsId}`
+    url: `/subpackages/detail/pages/goods-detail?value=${goodsId}`
   })
-}
+};
 
 const goToLogin = () => {
   uni.navigateTo({
-    url: '/subpackages/login/login'
+    url: '/subpackages/login/pages/login'
   })
-}
+};
 
 const goToOrder = () => {
   if (!userStore.isLoggedIn) {
@@ -143,9 +191,9 @@ const goToOrder = () => {
     return
   }
   uni.navigateTo({
-    url: '/subpackages/order/order'
+    url: '/subpackages/order/pages/order'
   })
-}
+};
 
 const goToAddress = () => {
   if (!userStore.isLoggedIn) {
@@ -156,27 +204,25 @@ const goToAddress = () => {
     return
   }
   uni.navigateTo({
-    url: '/subpackages/address/address'
+    url: '/subpackages/address/pages/address'
   })
-}
+};
 
 const goToSetting = () => {
   uni.navigateTo({
-    url: '/subpackages/setting/setting'
+    url: '/subpackages/setting/pages/setting'
   })
-}
+};
 
 const goToEvent = () => {
   uni.showToast({
     title: '功能正在开发中',
     icon: 'none'
   })
-}
+};
 </script>
 
-
 <style scoped lang="scss">
-
 .container {
   background: #fff;
   min-height: 100vh;
@@ -197,16 +243,45 @@ const goToEvent = () => {
     width: px2rpx(15);
     height: px2rpx(15);
     margin-left: 40rpx;
-
   }
+}
 
+.avatar-container {
+  position: relative;
+  margin-right: 40rpx;
 }
 
 .avatar {
   width: 120rpx;
   height: 120rpx;
   border-radius: 50%;
-  margin-right: 40rpx;
+  transition: opacity 0.3s;
+
+  &.uploading {
+    opacity: 0.7;
+  }
+}
+
+.upload-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .user-info {
@@ -232,7 +307,6 @@ const goToEvent = () => {
   margin: px2rpx(1) 0 0;
 }
 
-
 /* 认证卡片 */
 .auth-container {
   display: flex;
@@ -246,7 +320,7 @@ const goToEvent = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 12rpx 12rpx 0 0; /* 添加圆角 */
+  border-radius: 12rpx 12rpx 0 0;
   width: 80%;
 }
 
@@ -263,7 +337,7 @@ const goToEvent = () => {
 
 .auth-title {
   font-size: 30rpx;
-  color: #f0dbbe; /* 金色文字 */
+  color: #f0dbbe;
   font-weight: 500;
 }
 
@@ -282,8 +356,8 @@ const goToEvent = () => {
 /* 功能卡片容器 */
 .tool-card-container {
   display: flex;
-  flex-wrap: wrap; /* 允许换行 */
-  justify-content: space-between; /* 两端对齐 */
+  flex-wrap: wrap;
+  justify-content: space-between;
   padding: 0 30rpx;
   margin-bottom: 30rpx;
 }
@@ -301,7 +375,6 @@ const goToEvent = () => {
   width: 40%;
   margin-bottom: 20rpx;
 }
-
 
 /* 卡片内容布局 */
 .card-content {
@@ -342,38 +415,6 @@ const goToEvent = () => {
   width: 80rpx;
   height: 80rpx;
   margin-left: 20rpx;
-}
-
-/* 功能菜单 */
-.menu-group {
-  background: #fff;
-  margin-bottom: 20rpx;
-  border-radius: 12rpx;
-  overflow: hidden;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  padding: 30rpx;
-  border-bottom: 1rpx solid #f5f5f5;
-}
-
-.menu-item:last-child {
-  border-bottom: none;
-}
-
-.icon {
-  width: 40rpx;
-  height: 40rpx;
-  margin-right: 20rpx;
-}
-
-.my-history {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .history-section {

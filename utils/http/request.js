@@ -1,4 +1,4 @@
-const baseURL = 'http://47.98.187.80:5000' // 后端地址
+const baseURL = 'https://letaoapi.jxsaichuang.com' // 后端地址
 import { useUserStore } from '@/stores/modules/user.store'
 
 // 最大重试次数
@@ -99,5 +99,6 @@ export default {
     post: (url, data) => request(url, 'POST', data),
     put: (url, data) => request(url, 'PUT', data),
     delete: (url, data) => request(url, 'DELETE', data),
-    request
+    request,
+    baseURL
 }

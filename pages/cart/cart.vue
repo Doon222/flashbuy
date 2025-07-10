@@ -105,7 +105,7 @@ import GoodsApi from '@/api/goods'
 import AddressApi from '@/api/address'
 import OrderApi from '@/api/order'
 import NavLogo from "@/components/NavLogo.vue"
-import {onHide, onShow} from "@dcloudio/uni-app"
+import {onShow} from "@dcloudio/uni-app"
 import moment from "moment";
 import {showCarBadge} from "@/utils/showCarBadge";
 
@@ -125,7 +125,7 @@ const goToHome = () => {
 // 跳转到地址列表
 const goToAddress = () => {
   uni.navigateTo({
-    url: '/subpackages/address/address?from=cart'
+    url: '/subpackages/address/pages/address?from=cart'
   })
 }
 
@@ -334,7 +334,7 @@ const checkout = async () => {
 
       // 跳转到订单详情页
       uni.navigateTo({
-        url: `/subpackages/order/order-detail?order_id=${orderId}`
+        url: `/subpackages/order/pages/order-detail?order_id=${orderId}`
       })
 
       // 清空已选中的购物车商品
@@ -377,9 +377,6 @@ onShow(() => {
   showCarBadge()
 })
 
-onHide(()=>{
-  showCarBadge()
-})
 </script>
 
 <style scoped lang="scss">

@@ -1,4 +1,4 @@
-import http from '../utils/http/request'
+import http from '../../../utils/http/request'
 
 const API_BASE = '/api'
 
@@ -12,5 +12,5 @@ export default {
     }),
 
     // 查询支付状态
-    qureyPay: (order_id) => http.get(`${API_BASE}/queryPayOrder?order_id=${order_id}`)
+    qureyPay: (order_id) => http.post(`${API_BASE}/queryPayOrder?order_id=${order_id}`)
 }

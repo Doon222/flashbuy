@@ -131,15 +131,17 @@
 
 <script setup>
 import {computed, ref} from 'vue'
-import {onLoad} from '@dcloudio/uni-app'
+import {onHide, onLoad, onUnload} from '@dcloudio/uni-app'
 import OrderApi from '@/api/order'
 import GoodsApi from '@/api/goods'
 import UserApi from '@/api/user'
-import PayApi from '@/api/pay'
+import PayApi from '@/subpackages/order/api/pay'
 import NavLogo from "@/components/NavLogo.vue"
 import NavBar from "@/components/NavBar.vue"
 
-
+const payStatusTimer = ref(null)
+let pollCount = 0 // 当前轮询次数
+let isPaid = ref(false) // 新增：支付状态标志位
 
 const orderDetail = ref({
   order_id: '',
@@ -174,6 +176,40 @@ const padZero = (num) => {
   return num.toString().padStart(2, '0')
 }
 
+// 清除轮询
+const clearPolling = () => {
+  if (payStatusTimer.value) {
+    clearInterval(payStatusTimer.value)
+    payStatusTimer.value = null
+    pollCount = 0
+  }
+  uni.hideLoading() // 确保关闭所有加载状态
+}
+
+// 查询支付状态
+const checkPaymentStatus = async (order_id) => {
+  if (isPaid.value) return true; // 如果已标记为支付成功，则跳过
+
+  try {
+    const res = await PayApi.qureyPay(order_id)
+    console.log('支付状态响应:', res)
+
+    if (res.code === 20000) {
+      // 支付成功
+      clearPolling()
+      isPaid.value = true; // 标记为已支付
+      await fetchOrderDetail(order_id)
+      return true
+    }
+  } catch (error) {
+    console.error('支付状态查询失败:', error)
+    clearPolling()
+    uni.showToast({title: '支付状态查询失败', icon: 'none'})
+    await fetchOrderDetail(order_id)
+    return false
+  }
+}
+
 // 获取状态对应的样式类
 const statusClass = computed(() => {
   const order = orderDetail.value
@@ -194,13 +230,10 @@ const fetchOrderDetail = async (orderId) => {
     })
     // 获取订单详情
 
-    let a1 = await OrderApi.getOrderDetail(orderId)
-    console.log(a1)
-    orderDetail.value = a1
+    orderDetail.value = await OrderApi.getOrderDetail(orderId)
     // 获取订单内商品详情
-    let a2 = await GoodsApi.getCarGoods(orderDetail.value.goods_ids)
-    console.log(a2.message)
-    orderDetail.value.goods = a2.message
+    let goods = await GoodsApi.getCarGoods(orderDetail.value.goods_ids)
+    orderDetail.value.goods = goods.message
 
     uni.hideLoading()
   } catch (error) {
@@ -216,30 +249,51 @@ const fetchOrderDetail = async (orderId) => {
 // 支付订单
 const payOrder = async (order_id) => {
   try {
-    // 1. 获取登录凭证（使用 Promise 方式）
+    // 显示支付中状态
+    uni.showLoading({
+      title: '支付中...',
+      mask: true
+    })
+
+    isPaid.value = false; // 重置支付状态
+
+    // 1. 获取登录凭证
     const loginRes = await new Promise((resolve, reject) => {
       uni.login({
         success: resolve,
         fail: reject
-      });
-    });
+      })
+    })
 
     // 2. 获取 openid
-    const { openid } = await UserApi.getOpenId(loginRes.code);
+    const {openid} = await UserApi.getOpenId(loginRes.code)
 
     // 3. 准备支付数据
     const payData = {
       order_id,
       openid,
       total_price: orderDetail.value.total_price
-    };
+    }
 
     // 4. 获取支付参数
-    const payRes = await PayApi.pay(payData);
-    const paymentParams = payRes.data;
+    const payRes = await PayApi.pay(payData)
+    const paymentParams = payRes.data
     console.log('支付参数:', paymentParams)
 
-    // 5. 拉起微信支付（使用 Promise 方式）
+    // 5. 启动支付状态轮询
+    clearPolling() // 先清除可能的旧定时器
+
+    // 设置定时轮询（每2秒一次）
+    payStatusTimer.value = setInterval(async () => {
+      if (pollCount >= 10) { // 最多轮询10次
+        clearPolling()
+        return
+      }
+      await checkPaymentStatus(order_id)
+      pollCount++
+    }, 2000)
+
+    // 6. 拉起微信支付
     await new Promise((resolve, reject) => {
       uni.requestPayment({
         provider: 'wxpay',
@@ -248,29 +302,43 @@ const payOrder = async (order_id) => {
         package: paymentParams.package,
         signType: paymentParams.signType,
         paySign: paymentParams.paySign,
-        success: resolve,
-        fail: reject
-      });
-    });
+        success: async () => {
+          // 支付成功回调
+          clearPolling()
+          isPaid.value = true;
 
-    // 6. 支付成功处理
-    uni.showToast({ title: '支付成功', icon: 'success' });
-    setTimeout(() => fetchOrderDetail(order_id), 1500);
+          // 强制刷新页面数据
+          await fetchOrderDetail(order_id)
+
+          uni.showToast({
+            title: '支付成功',
+            icon: 'success',
+            duration: 2000
+          })
+          resolve()
+        },
+        fail: reject
+      })
+    })
 
   } catch (error) {
-    console.error('支付流程异常:', error);
+    console.error('支付流程异常:', error)
+    clearPolling() // 支付失败时清除轮询
 
     // 分类错误处理
     if (error.errMsg && error.errMsg.includes('cancel')) {
-      uni.showToast({ title: '已取消支付', icon: 'none' });
+      uni.showToast({title: '已取消支付', icon: 'none'})
     } else {
       uni.showToast({
         title: error.message || '支付失败',
         icon: 'none'
-      });
+      })
     }
+
+    // 支付失败也刷新页面
+    await fetchOrderDetail(order_id)
   }
-};
+}
 
 // 确认收货
 const confirmReceipt = () => {
@@ -353,6 +421,13 @@ onLoad((options) => {
   }
 })
 
+onUnload(() => {
+  clearPolling()
+})
+
+onHide(() => {
+  clearPolling()
+})
 </script>
 
 <style lang="scss" scoped>

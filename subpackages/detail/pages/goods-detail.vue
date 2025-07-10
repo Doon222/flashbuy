@@ -130,8 +130,8 @@
 <script setup>
 import {ref} from 'vue';
 import {onLoad, onShow} from '@dcloudio/uni-app';
-import GoodsApi from '../../api/goods';
-import HistoryApi from '../../api/history'
+import GoodsApi from '../../../api/goods';
+import HistoryApi from '../../../api/history'
 import {useCartStore} from "@/stores/modules/cart.store";
 import {useUserStore} from "@/stores/modules/user.store";
 import NavLogo from "@/components/NavLogo.vue";

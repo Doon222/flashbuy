@@ -94,7 +94,7 @@ watch(() => props.showSearch, async (newVal) => {
 // 处理搜索跳转
 function navigateToSearch() {
   uni.navigateTo({
-    url: '/subpackages/search/search'
+    url: '/subpackages/search/pages/search'
   })
 }
 

@@ -54,7 +54,7 @@ import {ref} from 'vue'
 import NavLogo from "@/components/NavLogo.vue";
 import BackBtn from "@/components/BackBtn.vue";
 // 导入 Pinia store
-import {useSearchHistoryStore} from '/stores/modules/search.store'
+import {useSearchHistoryStore} from '@/subpackages/search/stores/modules/search.store'
 
 const searchQuery = ref('')
 const searchStore = useSearchHistoryStore()
@@ -85,7 +85,7 @@ const search = () => {
 
   // // 跳转到搜索结果页
   uni.navigateTo({
-    url: `/subpackages/search/search-result?value=${query}`
+    url: `/subpackages/search/pages/search-result?value=${query}`
   })
 }
 

@@ -193,14 +193,14 @@ const handleDelete = async (id) => {
 const handleEdit = (id) => {
   console.log("编辑地址", id)
   uni.navigateTo({
-    url: `/subpackages/address/set-address?addressId=${id}`
+    url: `/subpackages/address/pages/set-address?addressId=${id}`
   })
 }
 
 // 添加地址
 const handleAdd = () => {
   uni.navigateTo({
-    url: '/subpackages/address/set-address'
+    url: '/subpackages/address/pages/set-address'
   })
 }
 

@@ -47,7 +47,6 @@
 import {ref, computed} from 'vue'
 import UserApi from "@/api/user";
 import {useUserStore} from "@/stores/modules/user.store";
-import {useCartStore} from "@/stores/modules/cart.store";
 import NavLogo from "@/components/NavLogo.vue";
 import NavBar from "@/components/NavBar.vue";
 
