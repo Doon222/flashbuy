@@ -12,5 +12,17 @@ export default {
 
     // 取消订单
     cancelOrder: (orderId) => http.post(`${API_BASE}/cancelorder?order_id=${orderId}`),
+
+    // 下单
+    createOrder: (data) => http.post(`${API_BASE}/commitorder`, {
+        order_id: data.order_id,
+        goods_id: data.goods_id,
+        number: data.number,
+        total_price: data.total_price,
+        address_id: data.address_id
+    }),
+
+    // 获取订单详情
+    getOrderDetail: (orderId) => http.post(`${API_BASE}/getorder?order_id=${orderId}`)
 }
 

@@ -1,6 +1,6 @@
 <template>
   <view class="cart-container">
-    <NavLogo />
+    <NavLogo/>
 
     <!-- 默认地址卡片 -->
     <view
@@ -47,7 +47,7 @@
           <!-- 数量控制 -->
           <view class="item-quantity">
             <view class="quantity-btn" @click="changeQuantity(item.id, -1)">
-              <image src="/static/images/minus.png" class="quantity-icon" />
+              <image src="/static/images/minus.png" class="quantity-icon"/>
             </view>
             <input
                 class="quantity-input"
@@ -56,21 +56,21 @@
                 @blur="validateQuantity(item)"
             />
             <view class="quantity-btn" @click="changeQuantity(item.id, 1)">
-              <image src="/static/images/plus.png" class="quantity-icon" />
+              <image src="/static/images/plus.png" class="quantity-icon"/>
             </view>
           </view>
         </view>
 
         <!-- 删除按钮 -->
         <view class="item-delete" @click="removeItem(item.id)">
-          <image src="/static/images/delete.png" class="delete-icon" />
+          <image src="/static/images/delete.png" class="delete-icon"/>
         </view>
       </view>
     </view>
 
     <!-- 空购物车提示 -->
     <view class="empty-cart" v-else>
-      <image src="/static/images/empty-cart.png" class="empty-icon" />
+      <image src="/static/images/empty-cart.png" class="empty-icon"/>
       <text class="empty-text">购物车空空如也~</text>
       <button class="go-home-btn" @click="goToHome">去首页逛逛</button>
     </view>
@@ -98,20 +98,19 @@
 </template>
 
 <script setup>
-import {ref, computed, watch, onMounted, onUnmounted} from 'vue'
-import { useCartStore } from '@/stores/modules/cart.store'
-import {useAddressStore} from "@/stores/modules/address.store";
+import {ref, computed, watch, onMounted} from 'vue'
+import {useCartStore} from '@/stores/modules/cart.store'
+import {useAddressStore} from '@/stores/modules/address.store'
 import GoodsApi from '@/api/goods'
 import AddressApi from '@/api/address'
 import NavLogo from "@/components/NavLogo.vue"
-import {onShow} from "@dcloudio/uni-app";
+import {onShow} from "@dcloudio/uni-app"
 
 const cartStore = useCartStore()
 const addressStore = useAddressStore()
 const cartGoods = ref([]) // 存储购物车商品数据
 const loading = ref(false)
 const addressList = ref([])
-const currentAddress = ref(null)
 
 // 跳转到首页
 const goToHome = () => {
@@ -127,7 +126,7 @@ const goToAddress = () => {
   })
 }
 
- // 跳转到商品详情页面
+// 跳转到商品详情页面
 const goToGoodsDetail = (goodsId) => {
   uni.navigateTo({
     url: `/subpackages/detail/goods-detail?value=${goodsId}`
@@ -158,7 +157,7 @@ const displayAddress = computed(() => {
   return addressStore.currentAddress || addressStore.defaultAddress
 })
 
-// 获取购物车商品数据
+// 获取购物车商品数据 - 修复后的方法
 const fetchCartGoods = async () => {
   if (cartStore.isCartEmpty) {
     cartGoods.value = []
@@ -167,18 +166,27 @@ const fetchCartGoods = async () => {
 
   try {
     loading.value = true
+
     // 获取购物车中所有商品的ID（逗号分隔）
     const goodsIds = cartStore.items.map(item => item.id).join(',')
+
+    // 调用 getCarGoods 方法获取商品详情
     const res = await GoodsApi.getCarGoods(goodsIds)
 
-    if (res.status === 0) {
-      cartGoods.value = res.message || []
+    // 根据你的API返回结构调整这里
+    if (Array.isArray(res)) {
+      cartGoods.value = res
+    } else if (res && res.message) {
+      cartGoods.value = res.message
     } else {
       throw new Error('获取购物车商品失败')
     }
   } catch (error) {
     console.error('获取购物车商品失败:', error)
-    uni.showToast({ title: '加载购物车商品失败', icon: 'none' })
+    uni.showToast({
+      title: '加载购物车商品失败',
+      icon: 'none'
+    })
   } finally {
     loading.value = false
   }
@@ -187,7 +195,9 @@ const fetchCartGoods = async () => {
 // 合并购物车数据和商品详情
 const cartItemsWithDetails = computed(() => {
   return cartStore.items.map(cartItem => {
-    const goodsInfo = cartGoods.value.find(g => g.id === cartItem.id) || {}
+    // 在 cartGoods 中查找匹配的商品详情
+    const goodsInfo = cartGoods.value.find(g => g.id == cartItem.id) || {}
+
     return {
       ...cartItem,
       title: goodsInfo.title || '未知商品',
@@ -223,7 +233,7 @@ const changeQuantity = (id, delta) => {
   if (item) {
     const newQuantity = item.number + delta
     if (newQuantity > 0) {
-      cartStore.updateItem(id, { number: newQuantity })
+      cartStore.updateItem(id, {number: newQuantity})
     }
   }
 }
@@ -231,7 +241,7 @@ const changeQuantity = (id, delta) => {
 // 验证数量输入
 const validateQuantity = (item) => {
   if (item.number < 1) {
-    cartStore.updateItem(item.id, { number: 1 })
+    cartStore.updateItem(item.id, {number: 1})
   }
 }
 
@@ -252,7 +262,7 @@ const removeItem = (id) => {
 const toggleSelect = (id) => {
   const item = cartStore.items.find(i => i.id === id)
   if (item) {
-    cartStore.updateItem(id, { selected: !item.selected })
+    cartStore.updateItem(id, {selected: !item.selected})
   }
 }
 
@@ -260,35 +270,38 @@ const toggleSelect = (id) => {
 const toggleSelectAll = () => {
   const newSelectedState = !isAllSelected.value
   cartStore.items.forEach(item => {
-    cartStore.updateItem(item.id, { selected: newSelectedState })
+    cartStore.updateItem(item.id, {selected: newSelectedState})
   })
 }
 
 // 结算
 const checkout = () => {
   if (selectedCount.value === 0) {
-    uni.showToast({ title: '请选择要结算的商品', icon: 'none' })
+    uni.showToast({
+      title: '请选择要结算的商品',
+      icon: 'none'
+    })
     return
   }
 
   const selectedItems = cartStore.items.filter(item => item.selected)
   uni.navigateTo({
-    url: '/pages/order/confirm?items=' + encodeURIComponent(JSON.stringify(selectedItems))
+    url: '/subpackages/order/order-detail'
   })
 }
 
 // 监听购物车变化
 watch(() => cartStore.items, () => {
   fetchCartGoods()
-}, { deep: true })
+}, {deep: true})
 
 // 初始化
 onMounted(() => {
   fetchDefaultAddress()
   fetchCartGoods()
+
   // 监听地址选择事件
   uni.$on('addressSelected', (address) => {
-    // 将选择的地址存入仓库
     addressStore.setCurrentAddress(address)
   })
 })
@@ -297,23 +310,17 @@ onMounted(() => {
 onShow(() => {
   fetchDefaultAddress()
 })
-
-onUnmounted(() => {
-  // 移除事件监听
-  uni.$off('addressSelected')
-})
 </script>
 
 <style scoped lang="scss">
-
-/* 默认地址卡片样式 */
+/* 样式保持不变，与之前相同 */
 .default-address-card {
   position: relative;
   margin: 20rpx;
   padding: 24rpx;
   background: #fff;
   border-radius: 16rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.08);
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
 }
 
 .address-header {
@@ -373,7 +380,6 @@ onUnmounted(() => {
   font-size: 30rpx;
 }
 
-
 .cart-container {
   padding-bottom: 100rpx;
 }
@@ -389,10 +395,11 @@ onUnmounted(() => {
   margin-bottom: 20rpx;
   background: #fff;
   border-radius: 16rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
 
   .item-select {
     margin-right: 20rpx;
+
     .select-icon {
       width: 36rpx;
       height: 36rpx;
@@ -408,10 +415,15 @@ onUnmounted(() => {
 
   .item-info {
     flex: 1;
+
     .item-title {
       font-size: 28rpx;
       color: #333;
       margin-bottom: 10rpx;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
     }
 
     .item-price {
@@ -450,6 +462,7 @@ onUnmounted(() => {
 
   .item-delete {
     margin-left: 20rpx;
+
     .delete-icon {
       width: 40rpx;
       height: 40rpx;
@@ -497,7 +510,7 @@ onUnmounted(() => {
   .checkout-btn {
     width: 200rpx;
     height: 80rpx;
-    background: #e0620d;
+    background: linear-gradient(to right, #ff5a00, #ff7d33);
     color: #fff;
     border-radius: 40rpx;
     display: flex;
@@ -524,7 +537,7 @@ onUnmounted(() => {
   .empty-text {
     font-size: 28rpx;
     color: #999;
-    margin-bottom: 40rpx; /* 增加下边距 */
+    margin-bottom: 40rpx;
   }
 
   .go-home-btn {

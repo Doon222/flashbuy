@@ -24,7 +24,7 @@
       </view>
 
       <!-- 订单卡片 -->
-      <view v-for="(order, index) in filteredOrders" :key="order.id" class="order-card">
+      <view v-for="(order) in filteredOrders" :key="order.id" class="order-card" @click="goToOrderDetail(order)">
         <view class="order-header">
           <text class="order-id">订单号: {{ order.order_id }}</text>
           <text :class="['order-status', statusClass(order)]">{{ getStatusText(order) }}</text>
@@ -285,6 +285,12 @@ const deleteOrder = (order) => {
       }
     }
   });
+};
+
+const goToOrderDetail = (order) => {
+  uni.navigateTo({
+    url: `/subpackages/order/order-detail?order_id=${order.order_id}`
+  })
 };
 
 // 初始化
