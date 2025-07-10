@@ -310,13 +310,14 @@ onLoad((options) => {
     }, 1500)
   }
 })
+
 </script>
 
 <style lang="scss" scoped>
 .order-detail {
   padding-bottom: 120rpx;
   background-color: #f5f5f5;
-  min-height: 100vh;
+  min-height: 100%;
 }
 
 .order-status {

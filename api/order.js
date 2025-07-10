@@ -16,7 +16,7 @@ export default {
     // 下单
     createOrder: (data) => http.post(`${API_BASE}/commitorder`, {
         order_id: data.order_id,
-        goods_id: data.goods_id,
+        goods_ids: data.goods_ids,
         number: data.number,
         total_price: data.total_price,
         address_id: data.address_id

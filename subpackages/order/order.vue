@@ -68,7 +68,7 @@
           <button
               v-if="order.status === 0 && order.is_cancel === 0"
               class="action-btn primary"
-              @click="payOrder(order)"
+              @click.stop="payOrder(order)"
           >
             去支付
           </button>
@@ -81,14 +81,14 @@
           <button
               v-if="order.status === 1 && order.is_out === 1"
               class="action-btn primary"
-              @click="confirmReceipt(order)"
+              @click.stop="confirmReceipt(order)"
           >
             确认收货
           </button>
           <button
               v-if="order.is_finish === 1 || order.is_cancel === 1"
               class="action-btn"
-              @click="deleteOrder(order)"
+              @click.stop="deleteOrder(order)"
           >
             删除订单
           </button>
@@ -101,7 +101,7 @@
           <button
               v-if="order.status === 0 && order.is_cancel === 0"
               class="action-btn"
-              @click="cancelOrder(order)"
+              @click.stop="cancelOrder(order)"
           >
             取消订单
           </button>
@@ -211,11 +211,9 @@ const fetchOrders = async () => {
 
 // 支付订单
 const payOrder = (order) => {
-  uni.showToast({
-    title: '跳转支付页面',
-    icon: 'none'
-  });
-  // 跳转到支付页面
+  uni.navigateTo({
+    url: `/subpackages/order/order-detail?order_id=${order.order_id}`
+  })
 };
 
 // 确认收货

@@ -103,8 +103,11 @@ import {useCartStore} from '@/stores/modules/cart.store'
 import {useAddressStore} from '@/stores/modules/address.store'
 import GoodsApi from '@/api/goods'
 import AddressApi from '@/api/address'
+import OrderApi from '@/api/order'
 import NavLogo from "@/components/NavLogo.vue"
-import {onShow} from "@dcloudio/uni-app"
+import {onHide, onShow} from "@dcloudio/uni-app"
+import moment from "moment";
+import {showCarBadge} from "@/utils/showCarBadge";
 
 const cartStore = useCartStore()
 const addressStore = useAddressStore()
@@ -157,7 +160,7 @@ const displayAddress = computed(() => {
   return addressStore.currentAddress || addressStore.defaultAddress
 })
 
-// 获取购物车商品数据 - 修复后的方法
+// 获取购物车商品数据
 const fetchCartGoods = async () => {
   if (cartStore.isCartEmpty) {
     cartGoods.value = []
@@ -274,8 +277,17 @@ const toggleSelectAll = () => {
   })
 }
 
+const genOrderId = () => {
+  // 生成6位随机数
+  let randomStr = ''
+  for (let i = 1; i <= 6; i++) {
+    randomStr += Math.floor(Math.random() * 10)
+  }
+  return moment().format('YYYYMMDDHHmmss') + randomStr
+}
+
 // 结算
-const checkout = () => {
+const checkout = async () => {
   if (selectedCount.value === 0) {
     uni.showToast({
       title: '请选择要结算的商品',
@@ -284,10 +296,63 @@ const checkout = () => {
     return
   }
 
-  const selectedItems = cartStore.items.filter(item => item.selected)
-  uni.navigateTo({
-    url: '/subpackages/order/order-detail'
-  })
+  // 检查是否有收货地址
+  if (!displayAddress.value) {
+    uni.showToast({
+      title: '请选择收货地址',
+      icon: 'none'
+    })
+    return
+  }
+
+  try {
+    uni.showLoading({
+      title: '正在生成订单...',
+      mask: true
+    })
+
+    // 获取选中的商品
+    const selectedItems = cartStore.items.filter(item => item.selected)
+
+    // 准备订单id
+    let  orderId = genOrderId()
+    // 准备订单数据
+    const orderData = {
+      address_id: displayAddress.value.id, // 使用当前显示的地址ID
+      number: selectedCount.value,
+      total_price: selectedTotalPrice.value,
+      order_id: orderId ,
+      goods_ids: selectedItems.map(item => item.id).join(',')
+    }
+
+    // 调用API创建订单
+    const res = await OrderApi.createOrder(orderData)
+
+    // 订单创建成功后，跳转到订单详情页
+    if (res && res.code === 20000) {
+      uni.hideLoading()
+
+      // 跳转到订单详情页
+      uni.navigateTo({
+        url: `/subpackages/order/order-detail?order_id=${orderId}`
+      })
+
+      // 清空已选中的购物车商品
+      selectedItems.forEach(item => {
+        cartStore.removeItem(item.id)
+      })
+
+    } else {
+      throw new Error('订单创建失败')
+    }
+  } catch (error) {
+    console.error('订单创建失败:', error)
+    uni.hideLoading()
+    uni.showToast({
+      title: '订单创建失败',
+      icon: 'none'
+    })
+  }
 }
 
 // 监听购物车变化
@@ -309,6 +374,11 @@ onMounted(() => {
 // 监听页面显示事件
 onShow(() => {
   fetchDefaultAddress()
+  showCarBadge()
+})
+
+onHide(()=>{
+  showCarBadge()
 })
 </script>
 
