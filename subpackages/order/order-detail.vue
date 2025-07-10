@@ -6,7 +6,6 @@
 
     <!-- 订单状态 -->
     <view class="order-status" :class="statusClass">
-      <text>{{ orderStatusText }}</text>
       <view class="status-desc">
         <text v-if="orderDetail.is_cancel === 1">订单已取消</text>
         <text v-else-if="orderDetail.status === 0">请尽快完成支付</text>
@@ -101,7 +100,7 @@
         <view
             v-if="orderDetail.status === 0 && !orderDetail.is_cancel"
             class="action-btn primary"
-            @click="payOrder"
+            @click="payOrder(orderDetail.order_id)"
         >
           立即支付
         </view>
@@ -135,8 +134,12 @@ import {computed, ref} from 'vue'
 import {onLoad} from '@dcloudio/uni-app'
 import OrderApi from '@/api/order'
 import GoodsApi from '@/api/goods'
+import UserApi from '@/api/user'
+import PayApi from '@/api/pay'
 import NavLogo from "@/components/NavLogo.vue"
 import NavBar from "@/components/NavBar.vue"
+
+
 
 const orderDetail = ref({
   order_id: '',
@@ -160,7 +163,6 @@ const orderDetail = ref({
   goods: null
 })
 
-
 // 格式化时间戳
 const formatTime = (timestamp) => {
   if (!timestamp) return ''
@@ -171,17 +173,6 @@ const formatTime = (timestamp) => {
 const padZero = (num) => {
   return num.toString().padStart(2, '0')
 }
-
-// 获取订单状态文本
-const orderStatusText = computed(() => {
-  const order = orderDetail.value
-  if (order.is_cancel === 1) return '已取消'
-  if (order.status === 0) return '待付款'
-  if (order.status === 1 && order.is_out === 0) return '待发货'
-  if (order.status === 1 && order.is_out === 1) return '待收货'
-  if (order.is_finish === 1) return '已完成'
-  return '未知状态'
-})
 
 // 获取状态对应的样式类
 const statusClass = computed(() => {
@@ -223,12 +214,63 @@ const fetchOrderDetail = async (orderId) => {
 }
 
 // 支付订单
-const payOrder = () => {
-  uni.showToast({
-    title: '跳转支付页面',
-    icon: 'none'
-  })
-}
+const payOrder = async (order_id) => {
+  try {
+    // 1. 获取登录凭证（使用 Promise 方式）
+    const loginRes = await new Promise((resolve, reject) => {
+      uni.login({
+        success: resolve,
+        fail: reject
+      });
+    });
+
+    // 2. 获取 openid
+    const { openid } = await UserApi.getOpenId(loginRes.code);
+
+    // 3. 准备支付数据
+    const payData = {
+      order_id,
+      openid,
+      total_price: orderDetail.value.total_price
+    };
+
+    // 4. 获取支付参数
+    const payRes = await PayApi.pay(payData);
+    const paymentParams = payRes.data;
+    console.log('支付参数:', paymentParams)
+
+    // 5. 拉起微信支付（使用 Promise 方式）
+    await new Promise((resolve, reject) => {
+      uni.requestPayment({
+        provider: 'wxpay',
+        timeStamp: String(paymentParams.timeStamp),
+        nonceStr: paymentParams.nonceStr,
+        package: paymentParams.package,
+        signType: paymentParams.signType,
+        paySign: paymentParams.paySign,
+        success: resolve,
+        fail: reject
+      });
+    });
+
+    // 6. 支付成功处理
+    uni.showToast({ title: '支付成功', icon: 'success' });
+    setTimeout(() => fetchOrderDetail(order_id), 1500);
+
+  } catch (error) {
+    console.error('支付流程异常:', error);
+
+    // 分类错误处理
+    if (error.errMsg && error.errMsg.includes('cancel')) {
+      uni.showToast({ title: '已取消支付', icon: 'none' });
+    } else {
+      uni.showToast({
+        title: error.message || '支付失败',
+        icon: 'none'
+      });
+    }
+  }
+};
 
 // 确认收货
 const confirmReceipt = () => {

@@ -34,7 +34,7 @@ export const useUserStore = defineStore('user', () => {
         refreshToken,
         isLoggedIn,
         login,
-        logout
+        logout,
     }
 }, {
     persist: {

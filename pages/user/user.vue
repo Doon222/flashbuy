@@ -3,7 +3,8 @@
     <NavLogo/>
     <!-- 用户信息头部 -->
     <view class="user-header">
-      <image src="/static/images/default-avatar.jpg" class="avatar"/>
+      <image :src="'http://47.98.187.80:5000/' + userStore.userInfo.avatar" class="avatar" v-if="userStore.userInfo.avatar"/>
+      <image src="/static/images/default-avatar.jpg" class="avatar" v-else/>
       <view class="user-info">
         <text class="username" v-if="userStore.isLoggedIn">{{ userStore.userInfo.username }}</text>
         <text class="username" v-else>请先登录/注册您的账号</text>
