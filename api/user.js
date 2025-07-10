@@ -9,7 +9,4 @@ export default {
     // 登录
     login: (data) => http.post(`${API_BASE}/login`, data),
 
-    // 上传头像
-    uploadAvatar: (formData) => http.post(`${API_BASE}/upload`, formData),
-    
 }

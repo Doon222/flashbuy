@@ -9,17 +9,19 @@
           :key="item.id"
           class="address-item"
           :class="{ 'default-address': item.isDefault }"
-          @click="handleSelectAddress(item)"
       >
-        <view class="address-header">
-          <text class="name">{{ item.name }}</text>
-          <text class="tel">{{ item.tel }}</text>
-          <text v-if="item.isDefault" class="default-tag">默认</text>
-        </view>
+        <!-- 添加一个包裹层处理选择地址 -->
+        <view class="selectable-area" @click="handleSelectAddress(item)">
+          <view class="address-header">
+            <text class="name">{{ item.name }}</text>
+            <text class="tel">{{ item.tel }}</text>
+            <text v-if="item.isDefault" class="default-tag">默认</text>
+          </view>
 
-        <view class="address-content">
-          <text class="region">{{ item.province }}{{ item.city }}{{ item.county }}</text>
-          <text class="detail">{{ item.addressDetail }}</text>
+          <view class="address-content">
+            <text class="region">{{ item.province }}{{ item.city }}{{ item.county }}</text>
+            <text class="detail">{{ item.addressDetail }}</text>
+          </view>
         </view>
 
         <view class="address-footer">
@@ -28,19 +30,21 @@
                 :checked="item.isDefault"
                 @change="handleSetDefault(item.id)"
                 class="address-switch"
+                @click.stop=""
+                :disabled="item.isDefault"
             />
             <text class="switch-label">设为默认</text>
           </view>
           <view class="right">
             <button
-                @click="handleEdit(item.id)"
+                @click.stop="handleEdit(item.id)"
                 class="action-btn edit-btn"
             >
               <text class="icon">✏️</text>
               编辑
             </button>
             <button
-                @click="handleDelete(item.id)"
+                @click.stop="handleDelete(item.id)"
                 class="action-btn delete-btn"
             >
               <text class="icon">🗑️</text>
@@ -117,7 +121,6 @@ const handleSetDefault = async (id) => {
 
     // 如果已经是默认地址，则不做任何操作
     if (targetAddress.isDefault) {
-      console.log('已经是默认地址，无需设置')
       return;
     }
 
@@ -148,7 +151,7 @@ const handleSetDefault = async (id) => {
 
     uni.hideLoading();
     uni.showToast({
-      title: '设置默认地址成功',
+      title: '已设置默认地址',
       icon: 'success'
     });
 
@@ -300,7 +303,8 @@ onLoad(() => {
   justify-content: space-between;
   align-items: center;
   border-top: 1rpx solid #f0f0f0;
-  padding-top: 24rpx;
+  padding: 0 28rpx 28rpx;
+
 
   .left {
     display: flex;
@@ -385,4 +389,10 @@ onLoad(() => {
     border: none;
   }
 }
+
+.selectable-area {
+  padding: 28rpx 28rpx 0; /* 调整内边距 */
+  cursor: pointer; /* 添加指针效果 */
+}
+
 </style>

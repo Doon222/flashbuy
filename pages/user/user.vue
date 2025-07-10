@@ -100,21 +100,18 @@ const historyList = ref([])
 onLoad(() => {
   if (userStore.isLoggedIn) {
     initData()
-    console.log('historyList=', historyList.value)
   }
 })
 
 onShow(() => {
   if (userStore.isLoggedIn) {
     initData()
-    console.log('historyList=', historyList.value)
   }
 })
 
 const initData = async () => {
   try {
     const res = await HistoryApi.getHistory()
-    console.log(res)
     historyList.value = res || []
   } catch (error) {
     uni.showToast({

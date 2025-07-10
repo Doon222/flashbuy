@@ -21,7 +21,7 @@
       <view class="arrow-icon">></view>
     </view>
 
-    <view class="no-address" v-if="!defaultAddress && !cartStore.isCartEmpty" @click="goToAddress">
+    <view class="no-address" v-if="!addressStore.defaultAddress && !cartStore.isCartEmpty" @click="goToAddress">
       <text>+ 请添加收货地址</text>
     </view>
 
@@ -100,18 +100,18 @@
 <script setup>
 import {ref, computed, watch, onMounted, onUnmounted} from 'vue'
 import { useCartStore } from '@/stores/modules/cart.store'
+import {useAddressStore} from "@/stores/modules/address.store";
 import GoodsApi from '@/api/goods'
 import AddressApi from '@/api/address'
 import NavLogo from "@/components/NavLogo.vue"
 import {onShow} from "@dcloudio/uni-app";
 
 const cartStore = useCartStore()
+const addressStore = useAddressStore()
 const cartGoods = ref([]) // 存储购物车商品数据
 const loading = ref(false)
 const addressList = ref([])
 const currentAddress = ref(null)
-
-
 
 // 跳转到首页
 const goToHome = () => {
@@ -128,7 +128,7 @@ const goToAddress = () => {
 }
 
  // 跳转到商品详情页面
- const goToGoodsDetail = (goodsId) => {
+const goToGoodsDetail = (goodsId) => {
   uni.navigateTo({
     url: `/subpackages/detail/goods-detail?value=${goodsId}`
   })
@@ -139,19 +139,23 @@ const fetchDefaultAddress = async () => {
   try {
     const res = await AddressApi.getAddressList()
     addressList.value = res
+
+    // 查找并设置默认地址
+    const defaultAddr = addressList.value.find(item => item.isDefault) || null
+    addressStore.setDefaultAddress(defaultAddr)
+
+    // 如果没有当前地址，使用默认地址作为当前地址
+    if (!addressStore.currentAddress) {
+      addressStore.setCurrentAddress(defaultAddr)
+    }
   } catch (error) {
     console.error('获取地址失败:', error)
   }
 }
 
-// 默认地址
-const defaultAddress = computed(() => {
-  return addressList.value.find(item => item.isDefault) || null
-})
-
 // 当前选择的地址
 const displayAddress = computed(() => {
-  return currentAddress.value || defaultAddress.value
+  return addressStore.currentAddress || addressStore.defaultAddress
 })
 
 // 获取购物车商品数据
@@ -284,7 +288,8 @@ onMounted(() => {
   fetchCartGoods()
   // 监听地址选择事件
   uni.$on('addressSelected', (address) => {
-    currentAddress.value = address
+    // 将选择的地址存入仓库
+    addressStore.setCurrentAddress(address)
   })
 })
 
