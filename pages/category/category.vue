@@ -14,8 +14,8 @@
             :class="{ active: activeCategoryId === category.id }"
             @click="selectCategory(category)"
         >
-          <text class="iconfont icon-fenlei"></text>
-          <text class="name">{{ category.title }}</text>
+          <text class="iconfont icon-fenlei category-icon"></text>
+          <text class="category-name">{{ category.title }}</text>
         </view>
       </scroll-view>
 
@@ -32,11 +32,11 @@
           />
 
           <view class="info-wrapper">
-            <view class="name">
-              <text class="iconfont icon-tag"></text>
-              <text>{{ activeCategoryTitle }}</text>
+            <view class="category-name-wrapper">
+              <text class="iconfont icon-tag category-tag-icon"></text>
+              <text class="category-title">{{ activeCategoryTitle }}</text>
             </view>
-            <view class="count">共 {{ goodsList.length }} 件商品</view>
+            <view class="category-count">共 {{ goodsList.length }} 件商品</view>
           </view>
         </view>
 
@@ -65,15 +65,15 @@
               </view>
             </view>
             <view class="no-more">
-              <text>—— 没有更多了 ——</text>
+              <text class="no-more-text">—— 没有更多了 ——</text>
             </view>
           </view>
 
           <!-- 无数据提示 -->
           <view v-else class="no-data">
-            <text class="iconfont icon-wushuju"></text>
-            <text class="text">暂无商品数据</text>
-            <text class="hint">该分类下暂无商品，请选择其他分类</text>
+            <text class="iconfont icon-wushuju no-data-icon"></text>
+            <text class="no-data-text">暂无商品数据</text>
+            <text class="no-data-hint">该分类下暂无商品，请选择其他分类</text>
           </view>
         </view>
       </scroll-view>
@@ -82,7 +82,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted} from 'vue';
 import GoodsApi from '@/api/goods';
 import NavLogo from "@/components/NavLogo.vue";
 import {onShow} from "@dcloudio/uni-app";
@@ -146,13 +146,12 @@ onMounted(() => {
   fetchCategories();
 });
 
-onShow(()=>{
+onShow(() => {
   showCarBadge()
 })
 </script>
 
 <style lang="scss">
-
 .page-container {
   display: flex;
   flex-direction: column;
@@ -165,22 +164,22 @@ onShow(()=>{
     overflow: hidden;
 
     .sidebar {
-      width: #{px2rpx(25)};
+      width: #{px2rpx(50)};
       background-color: #fff;
-      border-right: #{px2rpx(0.5)} solid #eee;
+      border-right: #{px2rpx(1)} solid #eee;
 
       .category-item {
-        padding: #{px2rpx(12)} #{px2rpx(5)};
+        padding: #{px2rpx(24)} #{px2rpx(10)};
         display: flex;
         flex-direction: column;
         align-items: center;
         font-size: 13px;
         color: #666;
-        border-left: #{px2rpx(2)} solid transparent;
+        border-left: #{px2rpx(4)} solid transparent;
         transition: all 0.2s;
 
-        .iconfont {
-          margin-bottom: #{px2rpx(4)};
+        .category-icon {
+          margin-bottom: #{px2rpx(8)};
           font-size: 20px;
         }
 
@@ -189,6 +188,10 @@ onShow(()=>{
           background-color: #fffaf0;
           color: #e67e22;
           font-weight: bold;
+
+          .category-name {
+            font-weight: bold;
+          }
         }
       }
     }
@@ -200,37 +203,37 @@ onShow(()=>{
         display: flex;
         flex-direction: column;
         background-color: #fff;
-        border-bottom: #{px2rpx(0.5)} solid #f0f0f0;
+        border-bottom: #{px2rpx(1)} solid #f0f0f0;
 
         .category-img {
           width: 95%;
           height: auto;
-          margin: px2rpx(4);
+          margin: px2rpx(8);
         }
 
         .info-wrapper {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: #{px2rpx(10)} #{px2rpx(12)};
+          padding: #{px2rpx(20)} #{px2rpx(24)};
 
-          .name {
+          .category-name-wrapper {
             font-size: 16px;
             font-weight: bold;
             color: #333;
 
-            .iconfont {
-              margin-right: #{px2rpx(4)};
+            .category-tag-icon {
+              margin-right: #{px2rpx(8)};
               color: #e67e22;
             }
           }
 
-          .count {
+          .category-count {
             font-size: 12px;
             color: #999;
             background-color: #f0f7ff;
-            padding: #{px2rpx(2)} #{px2rpx(8)};
-            border-radius: #{px2rpx(10)};
+            padding: #{px2rpx(4)} #{px2rpx(16)};
+            border-radius: #{px2rpx(20)};
           }
         }
       }
@@ -239,16 +242,16 @@ onShow(()=>{
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: #{px2rpx(40)} 0;
+        padding: #{px2rpx(80)} 0;
 
         .loading-spinner {
-          width: #{px2rpx(30)};
-          height: #{px2rpx(30)};
-          border: #{px2rpx(3)} solid #f3f3f3;
-          border-top: #{px2rpx(3)} solid #3498db;
+          width: #{px2rpx(60)};
+          height: #{px2rpx(60)};
+          border: #{px2rpx(6)} solid #f3f3f3;
+          border-top: #{px2rpx(6)} solid #3498db;
           border-radius: 50%;
           animation: spin 1s linear infinite;
-          margin-bottom: #{px2rpx(10)};
+          margin-bottom: #{px2rpx(20)};
         }
 
         .loading-text {
@@ -260,26 +263,26 @@ onShow(()=>{
       .goods-list {
         display: flex;
         flex-direction: column;
-        gap: #{px2rpx(10)};
-        padding: #{px2rpx(10)};
+        gap: #{px2rpx(20)};
+        padding: #{px2rpx(20)};
 
         .goods-card {
           display: flex;
           background-color: #fff;
-          border-radius: #{px2rpx(8)};
+          border-radius: #{px2rpx(16)};
           overflow: hidden;
-          box-shadow: 0 #{px2rpx(2)} #{px2rpx(6)} rgba(0, 0, 0, 0.05);
+          box-shadow: 0 #{px2rpx(4)} #{px2rpx(12)} rgba(0, 0, 0, 0.05);
 
           .goods-image {
-            width: #{px2rpx(50)};
-            height: #{px2rpx(50)};
+            width: #{px2rpx(100)};
+            height: #{px2rpx(100)};
             background-color: #f8f9fa;
-            border-bottom-right-radius: #{px2rpx(8)}; /* 右下角圆角 */
+            border-bottom-right-radius: #{px2rpx(16)}; /* 右下角圆角 */
           }
 
           .goods-info {
             flex: 1;
-            padding: #{px2rpx(10)};
+            padding: #{px2rpx(20)};
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -298,20 +301,20 @@ onShow(()=>{
             .goods-prices {
               display: flex;
               align-items: center;
-              margin-top: #{px2rpx(8)};
+              margin-top: #{px2rpx(16)};
 
               .current-price {
                 font-size: 16px;
                 font-weight: bold;
                 color: #e74c3c;
-                margin-right: #{px2rpx(6)};
+                margin-right: #{px2rpx(12)};
               }
 
               .original-price {
                 font-size: 12px;
                 color: #999;
                 text-decoration: line-through;
-                margin-right: #{px2rpx(2)};
+                margin-right: #{px2rpx(4)};
               }
             }
           }
@@ -322,22 +325,22 @@ onShow(()=>{
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: #{px2rpx(50)} #{px2rpx(20)};
+        padding: #{px2rpx(100)} #{px2rpx(40)};
         text-align: center;
 
-        .iconfont {
-          font-size: #{px2rpx(40)};
+        .no-data-icon {
+          font-size: #{px2rpx(80)};
           color: #ddd;
-          margin-bottom: #{px2rpx(15)};
+          margin-bottom: #{px2rpx(30)};
         }
 
-        .text {
+        .no-data-text {
           font-size: 16px;
           color: #666;
-          margin-bottom: #{px2rpx(8)};
+          margin-bottom: #{px2rpx(16)};
         }
 
-        .hint {
+        .no-data-hint {
           font-size: 13px;
           color: #999;
         }
@@ -347,14 +350,22 @@ onShow(()=>{
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-.no-more{
-  padding: px2rpx(15);
+.no-more {
+  padding: px2rpx(30);
   text-align: center;
   color: #999;
-  font-size: px2rpx(8);
+  font-size: px2rpx(16);
+
+  .no-more-text {
+    display: block;
+  }
 }
 </style>

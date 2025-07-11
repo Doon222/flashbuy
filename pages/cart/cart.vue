@@ -1,11 +1,15 @@
 <template>
   <view class="cart-container">
     <NavLogo/>
-
+    <!-- 登录提示 -->
+    <view class="login-prompt" v-if="!userStore.isLoggedIn && !cartStore.isCartEmpty" @click="goToLogin">
+      <text>请先登录</text>
+      <text class="login-text">去登录></text>
+    </view>
     <!-- 默认地址卡片 -->
     <view
         class="default-address-card"
-        v-if="displayAddress && !cartStore.isCartEmpty"
+        v-if="displayAddress && !cartStore.isCartEmpty && userStore.isLoggedIn"
         @click="goToAddress"
         style="border-left: 8rpx solid #e88a35;"
     >
@@ -20,13 +24,14 @@
       </view>
       <view class="arrow-icon">></view>
     </view>
-
-    <view class="no-address" v-if="!addressStore.defaultAddress && !cartStore.isCartEmpty" @click="goToAddress">
+    <!--地址卡片-->
+    <view class="no-address"
+          v-if="!addressStore.defaultAddress && !cartStore.isCartEmpty && userStore.isLoggedIn"
+          @click="goToAddress">
       <text>+ 请添加收货地址</text>
     </view>
-
     <!-- 购物车列表 -->
-    <view class="cart-list" v-if="!cartStore.isCartEmpty">
+    <view class="cart-list" v-if="!cartStore.isCartEmpty && userStore.isLoggedIn">
       <view class="cart-item" v-for="item in cartItemsWithDetails" :key="item.id">
         <!-- 勾选框 -->
         <view class="item-select" @click="toggleSelect(item.id)">
@@ -67,16 +72,16 @@
         </view>
       </view>
     </view>
-
     <!-- 空购物车提示 -->
-    <view class="empty-cart" v-else>
+    <view class="empty-cart" v-else-if="cartStore.isCartEmpty">
       <image src="/static/images/empty-cart.png" class="empty-icon"/>
       <text class="empty-text">购物车空空如也~</text>
-      <button class="go-home-btn" @click="goToHome">去首页逛逛</button>
+      <button class="go-home-btn" @click="userStore.isLoggedIn ? goToHome() : goToLogin()">
+        {{ userStore.isLoggedIn ? '去首页逛逛' : '去登录' }}
+      </button>
     </view>
-
     <!-- 底部结算栏 -->
-    <view class="checkout-bar" v-if="!cartStore.isCartEmpty">
+    <view class="checkout-bar" v-if="!cartStore.isCartEmpty && userStore.isLoggedIn">
       <view class="select-all" @click="toggleSelectAll">
         <image
             :src="isAllSelected ? '/static/images/selected.png' : '/static/images/unselected.png'"
@@ -100,21 +105,32 @@
 <script setup>
 import {ref, computed, watch, onMounted} from 'vue'
 import {useCartStore} from '@/stores/modules/cart.store'
+import {useUserStore} from "@/stores/modules/user.store";
 import {useAddressStore} from '@/stores/modules/address.store'
 import GoodsApi from '@/api/goods'
 import AddressApi from '@/api/address'
 import OrderApi from '@/api/order'
 import NavLogo from "@/components/NavLogo.vue"
-import {onShow} from "@dcloudio/uni-app"
+import {onShow, onUnload} from "@dcloudio/uni-app"
 import moment from "moment";
 import {showCarBadge} from "@/utils/showCarBadge";
+import {storeToRefs} from "pinia";
+
 
 const cartStore = useCartStore()
+const userStore = useUserStore()
 const addressStore = useAddressStore()
 const cartGoods = ref([]) // 存储购物车商品数据
 const loading = ref(false)
 const addressList = ref([])
+const {defaultAddress, currentAddress} = storeToRefs(addressStore)
 
+// 跳转到登录页
+const goToLogin = () => {
+  uni.navigateTo({
+    url: '/subpackages/login/pages/login'
+  })
+}
 // 跳转到首页
 const goToHome = () => {
   uni.switchTab({
@@ -147,7 +163,16 @@ const fetchDefaultAddress = async () => {
     addressStore.setDefaultAddress(defaultAddr)
 
     // 如果没有当前地址，使用默认地址作为当前地址
-    if (!addressStore.currentAddress) {
+    if (addressStore.currentAddress) {
+      const currentAddr = addressList.value.find(item => item.id === addressStore.currentAddress.id)
+      if (currentAddr) {
+        addressStore.setCurrentAddress(currentAddr)
+      } else {
+        // 如果当前地址在列表中不存在（被删除了），则清除当前地址
+        addressStore.clearCurrentAddress()
+      }
+    } else {
+      // 如果没有当前地址，使用默认地址作为当前地址
       addressStore.setCurrentAddress(defaultAddr)
     }
   } catch (error) {
@@ -157,11 +182,16 @@ const fetchDefaultAddress = async () => {
 
 // 当前选择的地址
 const displayAddress = computed(() => {
-  return addressStore.currentAddress || addressStore.defaultAddress
+  return currentAddress.value || defaultAddress.value
 })
 
 // 获取购物车商品数据
 const fetchCartGoods = async () => {
+
+  if (!userStore.isLoggedIn) {
+    return
+  }
+
   if (cartStore.isCartEmpty) {
     cartGoods.value = []
     return
@@ -169,7 +199,6 @@ const fetchCartGoods = async () => {
 
   try {
     loading.value = true
-
     // 获取购物车中所有商品的ID（逗号分隔）
     const goodsIds = cartStore.items.map(item => item.id).join(',')
 
@@ -288,6 +317,16 @@ const genOrderId = () => {
 
 // 结算
 const checkout = async () => {
+
+  // 检查登录状态
+  if (!userStore.isLoggedIn) {
+    uni.showToast({
+      title: '请先登录',
+      icon: 'none'
+    })
+    return
+  }
+
   if (selectedCount.value === 0) {
     uni.showToast({
       title: '请选择要结算的商品',
@@ -315,13 +354,13 @@ const checkout = async () => {
     const selectedItems = cartStore.items.filter(item => item.selected)
 
     // 准备订单id
-    let  orderId = genOrderId()
+    let orderId = genOrderId()
     // 准备订单数据
     const orderData = {
       address_id: displayAddress.value.id, // 使用当前显示的地址ID
       number: selectedCount.value,
       total_price: selectedTotalPrice.value,
-      order_id: orderId ,
+      order_id: orderId,
       goods_ids: selectedItems.map(item => item.id).join(',')
     }
 
@@ -355,6 +394,11 @@ const checkout = async () => {
   }
 }
 
+// 监听地址数据变化
+watch([defaultAddress, currentAddress], () => {
+  console.log('地址数据已更新，刷新显示')
+}, {deep: true})
+
 // 监听购物车变化
 watch(() => cartStore.items, () => {
   fetchCartGoods()
@@ -375,6 +419,14 @@ onMounted(() => {
 onShow(() => {
   fetchDefaultAddress()
   showCarBadge()
+  // 监听地址更新事件
+  uni.$on('addressUpdated', fetchDefaultAddress)
+  // 强制更新视图
+  addressList.value = [...addressList.value]
+})
+
+onUnload(() => {
+  uni.$off('addressSelected')
 })
 
 </script>
@@ -410,7 +462,7 @@ onShow(() => {
 }
 
 .default-tag {
-  background: #e0620d;
+  background: #ff5a00;
   color: #fff;
   font-size: 24rpx;
   padding: 4rpx 12rpx;
@@ -616,6 +668,23 @@ onShow(() => {
     border-radius: 40rpx;
     font-size: 28rpx;
     border: none;
+  }
+
+  .login-prompt {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20rpx 30rpx;
+    margin: 20rpx;
+    background-color: #fff8e6;
+    border-radius: 16rpx;
+    border-left: 8rpx solid #ff5a00;
+    color: #e88a35;
+    font-size: 30rpx;
+
+    .login-text {
+      font-weight: bold;
+    }
   }
 }
 </style>

@@ -30,7 +30,7 @@
                 :checked="item.isDefault"
                 @change="handleSetDefault(item.id)"
                 class="address-switch"
-                @click.stop=""
+                @click.stop="showHint(item.isDefault)"
                 :disabled="item.isDefault"
             />
             <text class="switch-label">设为默认</text>
@@ -78,11 +78,13 @@
 import {ref} from 'vue'
 import {onLoad, onShow} from '@dcloudio/uni-app'
 import AddressApi from '@/api/address'
+import {useAddressStore} from "@/stores/modules/address.store";
 import NavLogo from "@/components/NavLogo.vue";
 import NavBar from "@/components/NavBar.vue";
 
 // 地址列表数据
 const addressList = ref([])
+const addressStore = useAddressStore()
 
 
 // 点击地址项的处理
@@ -155,6 +157,22 @@ const handleSetDefault = async (id) => {
       icon: 'success'
     });
 
+    // 更新所有地址的默认状态
+    const updatedList = addressList.value.map(item => ({
+      ...item,
+      isDefault: item.id === id // 只有当前地址是默认地址
+    }))
+
+    addressList.value = updatedList;
+    // 更新 Pinia 存储
+    const defaultAddr = updatedList.find(item => item.isDefault) || null
+    addressStore.setDefaultAddress(defaultAddr)
+
+    // 如果当前地址被设为默认，也更新当前地址
+    if (addressStore.currentAddress && addressStore.currentAddress.id === id) {
+      addressStore.setCurrentAddress(defaultAddr)
+    }
+
   } catch (error) {
     uni.hideLoading();
     uni.showToast({
@@ -176,8 +194,20 @@ const handleDelete = async (id) => {
         console.log('用户点击确定')
         // 删除
         try {
+
           await AddressApi.delAddress(id)
           await fetchAddressList()
+
+          // 更新 Pinia 存储
+          const defaultAddr = addressList.value.find(item => item.isDefault) || null
+          addressStore.setDefaultAddress(defaultAddr)
+
+          // 如果删除的是当前地址，更新当前地址
+          if (addressStore.currentAddress && addressStore.currentAddress.id === id) {
+            addressStore.setCurrentAddress(defaultAddr)
+          }
+
+
         }catch (error) {
           uni.showToast({
             title: '删除地址失败',
@@ -204,9 +234,23 @@ const handleAdd = () => {
   })
 }
 
+// 提示已经是默认地址
+const showHint = (isDefault) => {
+  if(isDefault){
+    uni.showToast({
+      title: '已经是默认地址了',
+      icon: 'none'
+    })
+  }
+}
+
 // 页面显示时获取数据
 onShow(() => {
   fetchAddressList()
+  // 通知购物车页面刷新地址
+  uni.$emit('addressUpdated')
+  // 更新存储中的地址列表
+  addressStore.updateAddressList(addressList.value)
 })
 
 // 初始化获取数据
@@ -238,7 +282,7 @@ onLoad(() => {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &.default-address {
-    border-left: 8rpx solid #e88a35;
+    border-left: 8rpx solid #ff5a00;
     /* 默认地址可以加更明显的阴影 */
     box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
   }
@@ -269,7 +313,7 @@ onLoad(() => {
   }
 
   .default-tag {
-    background-color: #e88a35;
+    background-color: #ff5a00;
     color: #fff;
     font-size: 24rpx;
     padding: 4rpx 16rpx;
@@ -327,7 +371,7 @@ onLoad(() => {
     gap: 24rpx;
 
     .action-btn {
-      padding: 0 24rpx;
+      padding: 0 12rpx;
       height: 56rpx;
       line-height: 56rpx;
       font-size: 28rpx;
@@ -383,7 +427,7 @@ onLoad(() => {
     line-height: 88rpx;
     font-size: 34rpx;
     font-weight: 500;
-    background: linear-gradient(90deg, #ff9a3c, #e88a35);
+    background: #ff5a00;
     color: white;
     border-radius: 44rpx;
     border: none;

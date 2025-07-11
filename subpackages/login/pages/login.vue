@@ -63,8 +63,8 @@ const userStore = useUserStore()
 const validateUsername = () => {
   if (!username.value.trim()) {
     usernameError.value = '用户名不能为空'
-  } else if (username.value.length < 4) {
-    usernameError.value = '用户名至少4个字符'
+  } else if (username.value.length < 1) {
+    usernameError.value = '用户名至少1个字符'
   } else {
     usernameError.value = ''
   }
@@ -74,8 +74,8 @@ const validateUsername = () => {
 const validatePassword = () => {
   if (!password.value.trim()) {
     passwordError.value = '密码不能为空'
-  } else if (password.value.length < 6) {
-    passwordError.value = '密码至少6个字符'
+  } else if (password.value.length < 2) {
+    passwordError.value = '密码至少2个字符'
   } else {
     passwordError.value = ''
   }
@@ -83,8 +83,8 @@ const validatePassword = () => {
 
 // 计算属性：是否可以登录
 const canLogin = computed(() => {
-  return username.value.trim().length >= 4 &&
-      password.value.trim().length >= 6 &&
+  return username.value.trim().length >= 1 &&
+      password.value.trim().length >= 2 &&
       !usernameError.value &&
       !passwordError.value
 })
@@ -134,7 +134,7 @@ const handleLogin = async () => {
 // 跳转到注册页面
 const navigateToRegister = () => {
   uni.navigateTo({
-    url: '/subpackages/register/register'
+    url: '/subpackages/register/pages/register'
   })
 }
 

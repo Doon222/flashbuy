@@ -63,17 +63,17 @@ onUnmounted(() => {
 .back-btn {
   position: fixed;
   z-index: 1000; /* 提高层级确保在最前 */
-  right: px2rpx(30);
-  bottom: px2rpx(100);
+  right: px2rpx(60);
+  bottom: px2rpx(200);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: px2rpx(40);
-  height: px2rpx(20);
-  border-radius: px2rpx(20);
+  width: px2rpx(80);
+  height: px2rpx(40);
+  border-radius: px2rpx(40);
   background: linear-gradient(135deg, #7d4f9c, #74bce7);
   transition: all 0.3s ease;
-  padding: 0 px2rpx(10);
+  padding: 0 px2rpx(20);
 
 }
 
@@ -82,21 +82,21 @@ onUnmounted(() => {
 }
 
 .icon {
-  font-size: #{px2rpx(36)}rpx;
+  font-size: #{px2rpx(72)}rpx;
   font-weight: bold;
   color: white;
-  margin-right: #{px2rpx(8)}rpx;
+  margin-right: #{px2rpx(16)}rpx;
 }
 
 .text {
-  font-size: #{px2rpx(28)}rpx;
+  font-size: #{px2rpx(56)}rpx;
   color: white;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(#{px2rpx(20)}rpx);
+    transform: translateY(#{px2rpx(40)}rpx);
   }
   to {
     opacity: 1;

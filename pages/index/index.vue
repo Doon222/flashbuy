@@ -20,7 +20,7 @@
           circular>
 
         <swiper-item v-for="item in carouselList" :key="item.id" class="swiper-item">
-          <image :src="item.img" mode="aspectFill"></image>
+          <image :src="item.img" mode="aspectFill" class="carousel-image"></image>
         </swiper-item>
 
       </swiper>
@@ -30,39 +30,38 @@
         <view class="more-items">
           <view class="more-item">
             <view>
-              <image src="/static/images/sales.png" mode="aspectFill"></image>
+              <image src="/static/images/sales.png" mode="aspectFill" class="more-image"></image>
             </view>
-
-            <text>排行榜</text>
+            <text class="more-item-text">排行榜</text>
           </view>
           <view class="more-item">
             <view>
-              <image src="/static/images/digital.png" mode="aspectFill"></image>
+              <image src="/static/images/digital.png" mode="aspectFill" class="more-image"></image>
             </view>
-            <text>数码电器</text>
+            <text class="more-item-text">数码电器</text>
           </view>
           <view class="more-item">
             <view>
-              <image src="/static/images/furniture.png" mode="aspectFill"></image>
+              <image src="/static/images/furniture.png" mode="aspectFill" class="more-image"></image>
             </view>
-            <text>家居好物</text>
+            <text class="more-item-text">家居好物</text>
           </view>
           <view class="more-item">
             <view>
-              <image src="/static/images/ranking.png" mode="aspectFill" @click="goToCategory"></image>
+              <image src="/static/images/ranking.png" mode="aspectFill" class="more-image" @click="goToCategory"></image>
             </view>
-            <text>更多商品</text>
+            <text class="more-item-text">更多商品</text>
           </view>
         </view>
       </view>
 
       <view class="recommend">
-        <text>———— 为您推荐 ————</text>
+        <text class="recommend-text">———— 为您推荐 ————</text>
       </view>
 
       <view class="goods-list">
         <view class="goods-item" v-for="item in goodsList" :key="item.id" @click="goToGoodsDetail(item.id)">
-          <image :src="item.img_url" mode="aspectFill"></image>
+          <image :src="item.img_url" mode="aspectFill" class="goods-image"></image>
           <view class="goods-info">
             <text class="title">{{ item.title }}</text>
             <view class="price-view">
@@ -78,7 +77,7 @@
         <uni-load-more status="loading"></uni-load-more>
       </view>
       <view v-if="!hasMore && goodsList.length > 0" class="no-more">
-        <text>—— 没有更多了 ——</text>
+        <text class="no-more-text">—— 没有更多了 ——</text>
       </view>
     </scroll-view>
 
@@ -151,15 +150,14 @@ const fetchCarouselData = async () => {
   }
 }
 
-// 修复：正确传递分页参数
+// 请求商品列表
 const fetchGoodsData = async (page = 1) => {
   try {
-    // 修复：传递正确的参数格式
+    // 传递正确的参数格式
     const result = await goodsAPI.getGoodsList({
       page: page,
       pageSize: pageSize.value
     })
-    console.log('API返回数据:', result)
 
     // 验证数据结构
     if (result?.status !== 0 || !Array.isArray(result.message)) {
@@ -220,7 +218,7 @@ const goToGoodsDetail = (goodsId) => {
 }
 
 .swiper {
-  height: px2rpx(120);
+  height: px2rpx(240);
   width: 100vw;
 
   .swiper-item {
@@ -228,43 +226,43 @@ const goToGoodsDetail = (goodsId) => {
     justify-content: center;
     align-items: center;
 
-    image {
+    .carousel-image {
       border-radius: 15px;
     }
   }
 }
 
 .more-view {
-  margin-top: px2rpx(10);
+  margin-top: px2rpx(20);
   width: 100vw;
-  height: px2rpx(70);
+  height: px2rpx(140);
 
   .more-text {
-    font-size: px2rpx(8);
-    padding-top: px2rpx(4);
-    padding-left: px2rpx(10);
+    font-size: px2rpx(16);
+    padding-top: px2rpx(8);
+    padding-left: px2rpx(20);
     font-weight: bold;
   }
 
   .more-items {
     display: flex;
     justify-content: space-between;
-    padding-left: px2rpx(10);
-    padding-right: px2rpx(10);
-    margin-top: px2rpx(5);
+    padding-left: px2rpx(20);
+    padding-right: px2rpx(20);
+    margin-top: px2rpx(10);
 
     .more-item {
       display: flex;
       flex-direction: column;
       align-items: center;
 
-      image {
-        width: px2rpx(25);
-        height: px2rpx(25);
+      .more-image {
+        width: px2rpx(50);
+        height: px2rpx(50);
       }
 
-      text {
-        font-size: px2rpx(8);
+      .more-item-text {
+        font-size: px2rpx(16);
       }
     }
   }
@@ -274,61 +272,68 @@ const goToGoodsDetail = (goodsId) => {
   width: 100vw;
   text-align: center;
   color: #555555;
+
+  .recommend-text {
+    display: block;
+  }
 }
 
 .goods-list {
-  display: flex; /* 改为弹性布局 */
-  flex-wrap: wrap; /* 允许换行 */
-  padding: px2rpx(10);
+  display: flex;
+  flex-wrap: wrap;
+  padding: px2rpx(20);
 
   .goods-item {
-    width: calc(50% - #{px2rpx(5)}); /* 两列布局，减去间隙 */
-    margin-right: px2rpx(10); /* 右边距 */
-    margin-bottom: px2rpx(10); /* 下边距 */
+    width: calc(50% - #{px2rpx(10)});
+    margin-right: px2rpx(15);
+    margin-bottom: px2rpx(15);
     background: #fff;
-    border-radius: px2rpx(8);
+    border-radius: px2rpx(16);
     overflow: hidden;
-    box-shadow: 0 px2rpx(2) px2rpx(8) rgba(0, 0, 0, 0.06);
-    display: flex; /* 内部也使用弹性布局 */
-    flex-direction: column; /* 垂直排列 */
+    box-shadow: 0 px2rpx(4) px2rpx(16) rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
 
-    /* 每隔两个清除右边距 */
     &:nth-child(2n) {
       margin-right: 0;
     }
 
-    /* 图片区域 */
-    image {
+    .goods-image {
       width: 100%;
-      height: px2rpx(100); /* 缩小图片高度 */
+      height: px2rpx(150);
       display: block;
-      object-fit: cover; /* 保持比例填充 */
+      object-fit: cover;
     }
 
     .goods-info {
-      padding: px2rpx(6) px2rpx(8);
-      flex: 1; /* 占据剩余空间 */
+      padding: px2rpx(12) px2rpx(16);
+      flex: 1;
       display: flex;
       flex-direction: column;
 
       .title {
-        font-size: px2rpx(7); /* 缩小字体 */
+        font-size: px2rpx(14);
         color: #333;
         display: -webkit-box;
-        -webkit-line-clamp: 2; /* 两行文字 */
+        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        line-height: px2rpx(15);
-        min-height: px2rpx(30); /* 保持高度一致 */
-        margin-bottom: px2rpx(4);
+        line-height: px2rpx(30);
+        min-height: px2rpx(60);
+        margin-bottom: px2rpx(8);
       }
 
       .price-view {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         width: 100%;
+
         .price {
           color: #ff5000;
           font-weight: bold;
-          margin-top: auto; /* 价格到底部 */
+          margin-top: auto;
+          font-size: px2rpx(16);
 
           &::before {
             content: "¥";
@@ -336,26 +341,35 @@ const goToGoodsDetail = (goodsId) => {
         }
 
         .original-price {
-          font-size: 12px; /* 字体使用px */
+          font-size: px2rpx(12);
           color: #999;
           text-decoration: line-through;
-          margin-left: px2rpx(15);
+          margin-left: px2rpx(30);
 
           &::before {
             content: "¥";
           }
-
         }
       }
     }
   }
 }
 
-
 .loading-more, .no-more {
-  padding: px2rpx(15);
+  padding: px2rpx(30);
   text-align: center;
   color: #999;
-  font-size: px2rpx(8);
+  font-size: px2rpx(16);
+
+  .no-more-text {
+    display: block;
+  }
+}
+
+.goods-description {
+  font-size: px2rpx(14);
+  color: #666;
+  line-height: px2rpx(32);
+  margin-bottom: px2rpx(16);
 }
 </style>

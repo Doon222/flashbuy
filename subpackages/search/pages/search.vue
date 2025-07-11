@@ -129,32 +129,32 @@ const toSearch = (item) => {
 }
 
 .search-container {
-  padding: px2rpx(10) px2rpx(15);
+  padding: px2rpx(20) px2rpx(30);
   background-color: #fff;
-  margin-bottom: px2rpx(5);
+  margin-bottom: px2rpx(10);
 }
 
 .search-box {
   display: flex;
   align-items: center;
-  height: px2rpx(20);
+  height: px2rpx(40);
   background-color: #f5f5f5;
-  border-radius: px2rpx(20);
-  padding: 0 px2rpx(15);
-  box-shadow: 0 px2rpx(1) px2rpx(4) rgba(0, 0, 0, 0.05);
+  border-radius: px2rpx(40);
+  padding: 0 px2rpx(30);
+  box-shadow: 0 px2rpx(2) px2rpx(8) rgba(0, 0, 0, 0.05);
 }
 
 .search-icon {
-  font-size: px2rpx(8);
+  font-size: px2rpx(16);
   color: #999;
-  margin-right: px2rpx(10);
+  margin-right: px2rpx(20);
   flex-shrink: 0;
 }
 
 .search-input {
   flex: 1;
   height: 100%;
-  font-size: px2rpx(8);
+  font-size: px2rpx(16);
   color: #333;
   padding: 0;
   background: transparent;
@@ -162,41 +162,41 @@ const toSearch = (item) => {
 
 .placeholder-style {
   color: #999;
-  font-size: px2rpx(8);
+  font-size: px2rpx(16);
 }
 
 .search-btn {
   background: none;
   border: none;
   color: #007aff;
-  font-size: px2rpx(8);
+  font-size: px2rpx(14);
   font-weight: 500;
-  padding-left: px2rpx(10);
+  padding-left: px2rpx(20);
   flex-shrink: 0;
 }
 
 .history-section {
-  padding: 0 px2rpx(15);
+  padding: 0 px2rpx(30);
   background-color: #fff;
-  border-radius: px2rpx(10) px2rpx(10) 0 0;
+  border-radius: px2rpx(20) px2rpx(20) 0 0;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: px2rpx(15) 0;
+  padding: px2rpx(30) 0;
   border-bottom: 1rpx solid #f0f0f0;
 }
 
 .section-title {
-  font-size: px2rpx(8);
+  font-size: px2rpx(16);
   font-weight: 600;
   color: #333;
 }
 
 .clear-history {
-  font-size: px2rpx(7);
+  font-size: px2rpx(14);
   display: flex;
   align-items: center;
   color: red;
@@ -205,13 +205,13 @@ const toSearch = (item) => {
 .history-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: px2rpx(5);
-  padding: px2rpx(15) 0;
+  gap: px2rpx(10);
+  padding: px2rpx(30) 0;
 }
 
 .history-tag {
   background: #f7f7f7;
-  border-radius: px2rpx(20);
+  border-radius: px2rpx(40);
   padding: 16rpx 30rpx;
   font-size: 28rpx;
   color: #333;
@@ -229,7 +229,7 @@ const toSearch = (item) => {
 .history-tag .remove {
   color: #999;
   font-size: 36rpx;
-  margin-left: px2rpx(5);
+  margin-left: px2rpx(10);
   transition: color 0.2s;
 
   &:active {

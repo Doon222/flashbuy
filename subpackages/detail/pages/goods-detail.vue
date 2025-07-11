@@ -60,7 +60,7 @@
     <!-- 底部操作栏 -->
     <view class="action-bar">
       <view class="action-icon" @click="goCart">
-          <image src="/static/tabbar/cart-active.png" class="icon-image"></image>
+        <image src="/static/tabbar/cart-active.png" class="icon-image"></image>
         <text>购物车</text>
       </view>
       <view class="action-buttons">
@@ -230,6 +230,16 @@ const confirmAction = () => {
   };
 
   if (actionType.value === 'cart') {
+
+    // 检测是否登录
+    if (!userStore.isLoggedIn) {
+      // 未登录
+      uni.showToast({
+        title: '请先登录',
+        icon: 'none'
+      });
+      return;
+    }
     // 加入购物车
     cartStore.addItem(item);
     // 显示二次确认弹窗
@@ -238,7 +248,7 @@ const confirmAction = () => {
       icon: 'success'
     });
   } else {
-    // 立即购买逻辑（根据需求自行实现）
+    // 立即购买逻辑
     uni.showToast({
       title: `已购买${quantity.value}件商品`,
       icon: 'success'

@@ -225,8 +225,7 @@ const goToEvent = () => {
 <style scoped lang="scss">
 .container {
   background: #fff;
-  min-height: 100vh;
-  padding-bottom: px2rpx(20);
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -236,13 +235,12 @@ const goToEvent = () => {
   display: flex;
   align-items: center;
   margin-top: 30rpx;
-  padding: 0 px2rpx(15) px2rpx(10);
+  padding: 0 px2rpx(30) px2rpx(20);
   width: 90vw;
 
   .setting {
-    width: px2rpx(15);
-    height: px2rpx(15);
-    margin-left: 40rpx;
+    width: px2rpx(30);
+    height: px2rpx(30);
   }
 }
 
@@ -288,23 +286,23 @@ const goToEvent = () => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: px2rpx(100);
-  height: px2rpx(35);
+  width: px2rpx(200);
+  height: px2rpx(70);
 }
 
 .username {
-  font-size: px2rpx(8);
+  font-size: px2rpx(16);
   font-weight: bold;
   display: block;
   margin-bottom: 10rpx;
 }
 
 .login-btn {
-  width: px2rpx(40);
-  height: px2rpx(15);
+  width: px2rpx(80);
+  height: px2rpx(30);
   align-self: flex-start;
-  font-size: px2rpx(6);
-  margin: px2rpx(1) 0 0;
+  font-size: px2rpx(12);
+  margin: px2rpx(2) 0 0;
 }
 
 /* 认证卡片 */
@@ -420,6 +418,10 @@ const goToEvent = () => {
 .history-section {
   margin-top: 40rpx;
   padding: 0 30rpx;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .section-title {
@@ -434,8 +436,9 @@ const goToEvent = () => {
   border-radius: 16rpx;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
   padding: 0 20rpx;
-  margin-top: 60rpx;
-  margin-bottom: 40rpx;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .history-item {

@@ -94,12 +94,14 @@ import { onLoad } from '@dcloudio/uni-app'
 import NavLogo from "@/components/NavLogo.vue";
 import NavBar from "@/components/NavBar.vue";
 import addressApi from '@/api/address' // 导入API方法
+import {useAddressStore} from "@/stores/modules/address.store";
 
 // 导入省市区编码数据
 import areaData from '@/subpackages/address/utils/areaData'
 
 const isEdit = ref(false)
 const addressId = ref('')
+const addressStore = useAddressStore()
 
 // 表单数据
 const formData = reactive({
@@ -241,6 +243,28 @@ const submitForm = async () => {
   if (!validateForm()) return
 
   try {
+
+    // 获取当前地址列表
+    const res = await addressApi.getAddressList()
+    const addressList = res || []
+
+    // 检查当前地址是否是唯一地址
+    const isOnlyAddress = addressList.length === 0 ||
+        (isEdit.value && addressList.length === 1)
+
+    // 如果是唯一地址，强制设为默认地址
+    if (isOnlyAddress) {
+      formData.isDefault = true
+
+      // 如果用户试图取消唯一默认地址，显示提示
+      if (!formData.isDefault) {
+        uni.showToast({
+          title: '必须保留一个默认地址',
+          icon: 'none',
+          duration: 2000
+        })
+      }
+    }
     // 构建API参数
     const params = {
       name: formData.name,
@@ -258,9 +282,28 @@ const submitForm = async () => {
       // 编辑地址 - 添加地址ID
       await addressApi.updateAddress(addressId.value,params)
       uni.showToast({ title: '地址更新成功' })
+      // 如果是编辑当前地址，更新当前地址
+      if (addressStore.currentAddress && addressStore.currentAddress.id === addressId.value) {
+        addressStore.setCurrentAddress({
+          ...addressStore.currentAddress,
+          ...params
+        })
+      }
+      // 如果是默认地址，更新默认地址
+      if (addressStore.defaultAddress && addressStore.defaultAddress.id === addressId.value) {
+        addressStore.setDefaultAddress({
+          ...addressStore.defaultAddress,
+          ...params
+        })
+      }
     } else {
       // 新增地址
       await addressApi.addAddress(params)
+      if (formData.isDefault) {
+        addressStore.setDefaultAddress({
+          ...params
+        })
+      }
       uni.showToast({ title: '地址添加成功' })
     }
 
@@ -372,7 +415,7 @@ const cancel = () => {
   }
 
   .save-btn {
-    background: linear-gradient(90deg, #ff9a3c, #e88a35);
+    background: #ff5a00;
     color: white;
     border: none;
   }
