@@ -230,7 +230,6 @@ const confirmAction = () => {
   };
 
   if (actionType.value === 'cart') {
-
     // 检测是否登录
     if (!userStore.isLoggedIn) {
       // 未登录
@@ -248,6 +247,15 @@ const confirmAction = () => {
       icon: 'success'
     });
   } else {
+    // 检测是否登录
+    if (!userStore.isLoggedIn) {
+      // 未登录
+      uni.showToast({
+        title: '请先登录',
+        icon: 'none'
+      });
+      return;
+    }
     // 立即购买逻辑
     uni.showToast({
       title: `已购买${quantity.value}件商品`,
