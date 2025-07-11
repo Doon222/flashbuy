@@ -1,85 +1,90 @@
 <!--page/index/index.vue-->
 <template>
   <view class="container">
-    <!-- 使用导航栏组件 -->
-    <NavLogo show-search placeholder="搜索商品"/>
+    <!-- 导航栏固定区域 -->
+    <view class="nav-container">
+      <NavLogo show-search placeholder="搜索商品"/>
+    </view>
 
-    <scroll-view refresher-enabled
-                 @refresherrefresh="onRefresh"
-                 @scrolltolower="onScrollLower"
-                 :refresher-triggered="isRefreshing"
-                 class="scroll-view"
-                 scroll-y>
+    <view class="scroll-container">
+      <scroll-view refresher-enabled
+                   @refresherrefresh="onRefresh"
+                   @scrolltolower="onScrollLower"
+                   :refresher-triggered="isRefreshing"
+                   class="scroll-view"
+                   scroll-y>
 
-      <swiper
-          class="swiper"
-          :indicator-dots="true"
-          :autoplay="true"
-          :interval="3000"
-          :duration="500"
-          circular>
+        <swiper
+            class="swiper"
+            :indicator-dots="true"
+            :autoplay="true"
+            :interval="3000"
+            :duration="500"
+            circular>
 
-        <swiper-item v-for="item in carouselList" :key="item.id" class="swiper-item">
-          <image :src="item.img" mode="aspectFill" class="carousel-image"></image>
-        </swiper-item>
+          <swiper-item v-for="item in carouselList" :key="item.id" class="swiper-item">
+            <image :src="item.img" mode="aspectFill" class="carousel-image"></image>
+          </swiper-item>
 
-      </swiper>
+        </swiper>
 
-      <view class="more-view">
-        <view class="more-text">更多功能</view>
-        <view class="more-items">
-          <view class="more-item">
-            <view>
-              <image src="/static/images/sales.png" mode="aspectFill" class="more-image"></image>
+        <view class="more-view">
+          <view class="more-text">更多功能</view>
+          <view class="more-items">
+            <view class="more-item">
+              <view>
+                <image src="/static/images/sales.png" mode="aspectFill" class="more-image"></image>
+              </view>
+              <text class="more-item-text">排行榜</text>
             </view>
-            <text class="more-item-text">排行榜</text>
-          </view>
-          <view class="more-item">
-            <view>
-              <image src="/static/images/digital.png" mode="aspectFill" class="more-image"></image>
+            <view class="more-item">
+              <view>
+                <image src="/static/images/digital.png" mode="aspectFill" class="more-image"></image>
+              </view>
+              <text class="more-item-text">数码电器</text>
             </view>
-            <text class="more-item-text">数码电器</text>
-          </view>
-          <view class="more-item">
-            <view>
-              <image src="/static/images/furniture.png" mode="aspectFill" class="more-image"></image>
+            <view class="more-item">
+              <view>
+                <image src="/static/images/furniture.png" mode="aspectFill" class="more-image"></image>
+              </view>
+              <text class="more-item-text">家居好物</text>
             </view>
-            <text class="more-item-text">家居好物</text>
-          </view>
-          <view class="more-item">
-            <view>
-              <image src="/static/images/ranking.png" mode="aspectFill" class="more-image" @click="goToCategory"></image>
-            </view>
-            <text class="more-item-text">更多商品</text>
-          </view>
-        </view>
-      </view>
-
-      <view class="recommend">
-        <text class="recommend-text">———— 为您推荐 ————</text>
-      </view>
-
-      <view class="goods-list">
-        <view class="goods-item" v-for="item in goodsList" :key="item.id" @click="goToGoodsDetail(item.id)">
-          <image :src="item.img_url" mode="aspectFill" class="goods-image"></image>
-          <view class="goods-info">
-            <text class="title">{{ item.title }}</text>
-            <view class="price-view">
-              <text class="price"> {{ item.sell_price }}</text>
-              <text class="original-price">{{ item.market_price }}</text>
+            <view class="more-item">
+              <view>
+                <image src="/static/images/ranking.png" mode="aspectFill" class="more-image" @click="goToCategory"></image>
+              </view>
+              <text class="more-item-text">更多商品</text>
             </view>
           </view>
         </view>
-      </view>
 
-      <!-- 加载状态提示 -->
-      <view v-if="isLoading" class="loading-more">
-        <uni-load-more status="loading"></uni-load-more>
-      </view>
-      <view v-if="!hasMore && goodsList.length > 0" class="no-more">
-        <text class="no-more-text">—— 没有更多了 ——</text>
-      </view>
-    </scroll-view>
+        <view class="recommend">
+          <text class="recommend-text">———— 为您推荐 ————</text>
+        </view>
+
+        <view class="goods-list">
+          <view class="goods-item" v-for="item in goodsList" :key="item.id" @click="goToGoodsDetail(item.id)">
+            <image :src="item.img_url" mode="aspectFill" class="goods-image"></image>
+            <view class="goods-info">
+              <text class="title">{{ item.title }}</text>
+              <view class="price-view">
+                <text class="price"> {{ item.sell_price }}</text>
+                <text class="original-price">{{ item.market_price }}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 加载状态提示 -->
+        <view v-if="isLoading" class="loading-more">
+          <uni-load-more status="loading"></uni-load-more>
+        </view>
+        <view v-if="!hasMore && goodsList.length > 0" class="no-more">
+          <text class="no-more-text">—— 没有更多了 ——</text>
+        </view>
+      </scroll-view>
+    </view>
+
 
   </view>
 </template>
@@ -113,9 +118,10 @@ onShow(()=>{
 
 // 下拉刷新
 const onRefresh = async () => {
-  if (isRefreshing.value) return
 
+  if (isRefreshing.value) return
   isRefreshing.value = true
+
   try {
     currentPage.value = 1
     await fetchGoodsData(currentPage.value)
@@ -212,9 +218,21 @@ const goToGoodsDetail = (goodsId) => {
   flex-direction: column;
 }
 
-.scroll-view {
+/* 导航栏容器（固定高度） */
+.nav-container {
+  width: 100%;
+  z-index: 1000;
+}
+
+/* 滚动区域容器（占满剩余空间） */
+.scroll-container {
   flex: 1;
-  height: 100%;
+  height: 0; /* 关键：允许flex分配高度 */
+  overflow: hidden; /* 防止内容溢出 */
+}
+
+.scroll-view {
+  height: 100%; /* 占满父容器 */
 }
 
 .swiper {
@@ -285,8 +303,8 @@ const goToGoodsDetail = (goodsId) => {
 
   .goods-item {
     width: calc(50% - #{px2rpx(10)});
-    margin-right: px2rpx(15);
-    margin-bottom: px2rpx(15);
+    margin-right: px2rpx(20);
+    margin-bottom: px2rpx(20);
     background: #fff;
     border-radius: px2rpx(16);
     overflow: hidden;

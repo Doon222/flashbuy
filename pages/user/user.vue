@@ -357,7 +357,6 @@ const goToEvent = () => {
   flex-wrap: wrap;
   justify-content: space-between;
   padding: 0 30rpx;
-  margin-bottom: 30rpx;
 }
 
 /* 卡片主体 */

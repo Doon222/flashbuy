@@ -81,7 +81,9 @@
       </button>
     </view>
     <!-- 底部结算栏 -->
-    <view class="checkout-bar" v-if="!cartStore.isCartEmpty && userStore.isLoggedIn">
+    <view class="checkout-bar"
+          :class="{ 'h5-checkout-bar': isH5 }"
+          v-if="!cartStore.isCartEmpty && userStore.isLoggedIn">
       <view class="select-all" @click="toggleSelectAll">
         <image
             :src="isAllSelected ? '/static/images/selected.png' : '/static/images/unselected.png'"
@@ -124,6 +126,7 @@ const cartGoods = ref([]) // 存储购物车商品数据
 const loading = ref(false)
 const addressList = ref([])
 const {defaultAddress, currentAddress} = storeToRefs(addressStore)
+const isH5 = ref(false)
 
 // 跳转到登录页
 const goToLogin = () => {
@@ -406,6 +409,11 @@ watch(() => cartStore.items, () => {
 
 // 初始化
 onMounted(() => {
+
+  // #ifdef H5
+  isH5.value = true
+
+  // #endif
   fetchDefaultAddress()
   fetchCartGoods()
 
@@ -425,6 +433,7 @@ onShow(() => {
   addressList.value = [...addressList.value]
 })
 
+// 卸载解除监听
 onUnload(() => {
   uni.$off('addressSelected')
 })
@@ -686,5 +695,15 @@ onUnload(() => {
       font-weight: bold;
     }
   }
+}
+
+.cart-container {
+  padding-bottom: 150rpx; /* 增加底部内边距防止内容被遮挡 */
+}
+
+.h5-checkout-bar {
+  bottom: 50px !important; /* 调整结算栏位置避开Tabbar */
+  padding-bottom: constant(safe-area-inset-bottom); /* iOS 11.0 */
+  padding-bottom: env(safe-area-inset-bottom); /* iOS 11.2+ */
 }
 </style>
