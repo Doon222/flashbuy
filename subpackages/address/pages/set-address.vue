@@ -328,7 +328,7 @@ const cancel = () => {
 <style lang="scss" scoped>
 .container {
   padding: 30rpx;
-  background-color: #f7f7f7;
+  background-color: #ffffff;
   height: calc(100% - 120rpx);
 }
 

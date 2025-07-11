@@ -299,11 +299,11 @@ const goToGoodsDetail = (goodsId) => {
 .goods-list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   padding: px2rpx(20);
 
   .goods-item {
     width: calc(50% - #{px2rpx(10)});
-    margin-right: px2rpx(20);
     margin-bottom: px2rpx(20);
     background: #fff;
     border-radius: px2rpx(16);
@@ -312,9 +312,6 @@ const goToGoodsDetail = (goodsId) => {
     display: flex;
     flex-direction: column;
 
-    &:nth-child(2n) {
-      margin-right: 0;
-    }
 
     .goods-image {
       width: 100%;

@@ -409,28 +409,32 @@ watch(() => cartStore.items, () => {
 
 // 初始化
 onMounted(() => {
+  if (userStore.isLoggedIn){
 
-  // #ifdef H5
-  isH5.value = true
+    // #ifdef H5
+    isH5.value = true
 
-  // #endif
-  fetchDefaultAddress()
-  fetchCartGoods()
+    // #endif
+    fetchDefaultAddress()
+    fetchCartGoods()
 
-  // 监听地址选择事件
-  uni.$on('addressSelected', (address) => {
-    addressStore.setCurrentAddress(address)
-  })
+    // 监听地址选择事件
+    uni.$on('addressSelected', (address) => {
+      addressStore.setCurrentAddress(address)
+    })
+  }
 })
 
 // 监听页面显示事件
 onShow(() => {
-  fetchDefaultAddress()
-  showCarBadge()
-  // 监听地址更新事件
-  uni.$on('addressUpdated', fetchDefaultAddress)
-  // 强制更新视图
-  addressList.value = [...addressList.value]
+  if (userStore.isLoggedIn){
+    fetchDefaultAddress()
+    showCarBadge()
+    // 监听地址更新事件
+    uni.$on('addressUpdated', fetchDefaultAddress)
+    // 强制更新视图
+    addressList.value = [...addressList.value]
+  }
 })
 
 // 卸载解除监听
