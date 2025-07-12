@@ -3,7 +3,6 @@ node_modules/
 dist/
 unpackage/
 test.txt
-*.png
 # **：代表当前仓库中所有的子孙目录
 **/test.txt
 build/Release
